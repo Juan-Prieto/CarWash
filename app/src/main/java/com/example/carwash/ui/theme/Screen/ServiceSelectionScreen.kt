@@ -131,7 +131,6 @@ fun ServiceSelectionScreen(
                             precioTotal = totalPrice
                         )
                     )
-
                     // Registrar el servicio elegido (nombre y precio)
                     servicioRepository.insertar(
                         Servicio(
@@ -139,11 +138,10 @@ fun ServiceSelectionScreen(
                             precio = totalPrice
                         )
                     )
-
-                    navController.navigate("Revisar pendientes") // Navegar al historial o a la siguiente pantalla
+                    navController.navigate("Home")
                 }
             } else {
-                mensajeError = "Por favor, completa todos los campos."
+                mensajeError = "Por favor, complete todos los campos."
             }
         }) {
             Text("Confirmar Servicio")

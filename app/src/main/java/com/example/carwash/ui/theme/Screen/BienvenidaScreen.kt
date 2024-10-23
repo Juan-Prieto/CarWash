@@ -74,7 +74,8 @@ fun BienvenidaScreen(navController: NavController) {
                 shape = RoundedCornerShape(8.dp) // Bordes redondeados en la Card
             ) {
                 Text(
-                    text = "Si ya tienes cuenta, pulsa el botón iniciar sesión para solicitar uno de nuestros servicios. Si es tu primera vez ingresando, pulsa el botón registrarse para disfrutar y solicitar de nuestros servicios.",
+                    text = "Si quieres pedir un servicio, pulsa el boton registrarse, si quieres ver todos los servicios solicitados, " +
+                            "pulsa en el boton historial de servicios.",
                     fontSize = 16.sp,
                     color = Color.White,
                     textAlign = TextAlign.Justify,
@@ -88,7 +89,7 @@ fun BienvenidaScreen(navController: NavController) {
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
                 Button(
-                    onClick = { navController.navigate("login") },
+                    onClick = { navController.navigate("List") },
                     modifier = Modifier.padding(8.dp)
                 ) {
                     Text("Historial de servicios")

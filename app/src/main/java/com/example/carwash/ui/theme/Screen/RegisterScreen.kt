@@ -26,7 +26,6 @@ import androidx.navigation.NavController
 import com.example.carwash.Models.Cliente
 import com.example.carwash.R
 import com.example.carwash.Repository.ClienteRepository
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -214,7 +213,7 @@ fun RegisterScreen(navController: NavController, clienteRepository: ClienteRepos
                     // Boton regresar a la pantalla de bienvenido
                     Button(
                         onClick = {
-                            navController.navigate("welcome")
+                            navController.navigate("Home")
                         },
                         modifier = Modifier.padding(8.dp)
                     ) {
