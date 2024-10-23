@@ -77,7 +77,7 @@ fun RegisterScreen(navController: NavController, clienteRepository: ClienteRepos
 
                 // Título
                 Text(
-                    text = "Registrarse",
+                    text = "Registrar Usuario",
                     fontSize = 28.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.White,
@@ -113,56 +113,49 @@ fun RegisterScreen(navController: NavController, clienteRepository: ClienteRepos
 
                 // Campos de entrada
                 Column(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
+                    Text(text = "Registrar Usuario", fontSize = 24.sp)
+
+                    // Campos de texto para los datos
                     TextField(
                         value = nombre,
                         onValueChange = { nombre = it },
                         label = { Text("Nombre") },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(8.dp)
+                        modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)
                     )
                     TextField(
                         value = apellido,
                         onValueChange = { apellido = it },
                         label = { Text("Apellido") },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(8.dp)
+                        modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)
                     )
                     TextField(
                         value = telefono,
                         onValueChange = { telefono = it },
                         label = { Text("Teléfono") },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(8.dp)
+                        modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)
                     )
                     TextField(
                         value = email,
                         onValueChange = { email = it },
-                        label = { Text("Email") },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(8.dp)
+                        label = { Text("Correo Electrónico") },
+                        modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)
                     )
                     TextField(
                         value = direccion,
                         onValueChange = { direccion = it },
                         label = { Text("Dirección") },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(8.dp)
+                        modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)
                     )
                     TextField(
                         value = contraseña,
                         onValueChange = { contraseña = it },
                         label = { Text("Contraseña") },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(8.dp),
+                        modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
                         visualTransformation = PasswordVisualTransformation()
                     )
                 }
@@ -189,6 +182,7 @@ fun RegisterScreen(navController: NavController, clienteRepository: ClienteRepos
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
+                    // boton para registrar e ir a la pantalla de registrar vehiculo
                     Button(
                         onClick = {
                             if (nombre.isNotBlank() && apellido.isNotBlank() && telefono.isNotBlank() &&
@@ -205,10 +199,7 @@ fun RegisterScreen(navController: NavController, clienteRepository: ClienteRepos
                                             contraseña = contraseña
                                         )
                                     )
-
-                                    // Cambiar al hilo principal para la navegación y el mensaje de éxito
                                     withContext(Dispatchers.Main) {
-                                        mensajeExito = "Registro exitoso"
                                         navController.navigate("registrovehiculo/$clienteId")
                                     }
                                 }
@@ -220,9 +211,7 @@ fun RegisterScreen(navController: NavController, clienteRepository: ClienteRepos
                         Text("Registrarse")
                     }
 
-
-
-
+                    // Boton regresar a la pantalla de bienvenido
                     Button(
                         onClick = {
                             navController.navigate("welcome")

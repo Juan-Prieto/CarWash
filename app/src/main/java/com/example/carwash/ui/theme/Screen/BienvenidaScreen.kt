@@ -91,7 +91,7 @@ fun BienvenidaScreen(navController: NavController) {
                     onClick = { navController.navigate("login") },
                     modifier = Modifier.padding(8.dp)
                 ) {
-                    Text("Registrar lavado")
+                    Text("Historial de servicios")
                 }
                 Button(
                     onClick = {
@@ -99,7 +99,7 @@ fun BienvenidaScreen(navController: NavController) {
                     },
                     modifier = Modifier.padding(8.dp)
                 ) {
-                    Text("Registrarse")
+                    Text("Registrar")
                 }
             }
 

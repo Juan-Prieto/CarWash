@@ -16,35 +16,35 @@ import com.example.carwash.ui.theme.AppNavigation
 
 class MainActivity : ComponentActivity() {
 
-    private lateinit var ClienteDAO: ClienteDAO
-    private lateinit var RegistrolavadoDAO: RegistrolavadoDAO
-    private lateinit var ServicioDAO: ServicioDAO
-    private lateinit var VehiculoDAO: VehiculoDAO
+    private lateinit var clienteDAO: ClienteDAO
+    private lateinit var registroLavadoDAO: RegistrolavadoDAO
+    private lateinit var servicioDAO: ServicioDAO
+    private lateinit var vehiculoDAO: VehiculoDAO
 
     private lateinit var clienteRepository: ClienteRepository
     private lateinit var registroLavadoRepository: RegistroLavadoRepository
-    private lateinit var ServicioRepository: ServicioRepository
-    private lateinit var VehiculoRepository: VehiculoRepository
+    private lateinit var servicioRepository: ServicioRepository
+    private lateinit var vehiculoRepository: VehiculoRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val db = AppDatabase.getDatabase(applicationContext)
 
-        ClienteDAO = db.clienteDAO()
-        RegistrolavadoDAO = db.registroLavadoDAO()
-        ServicioDAO = db.servicioDAO()
-        VehiculoDAO = db.vehiculoDAO()
+        clienteDAO = db.clienteDAO()
+        registroLavadoDAO = db.registroLavadoDAO()
+        servicioDAO = db.servicioDAO()
+        vehiculoDAO = db.vehiculoDAO()
 
-        clienteRepository = ClienteRepository(ClienteDAO)
-        registroLavadoRepository = RegistroLavadoRepository(RegistrolavadoDAO)
-        ServicioRepository = ServicioRepository(ServicioDAO)
-        VehiculoRepository = VehiculoRepository(VehiculoDAO)
+        clienteRepository = ClienteRepository(clienteDAO)
+        registroLavadoRepository = RegistroLavadoRepository(registroLavadoDAO)
+        servicioRepository = ServicioRepository(servicioDAO)
+        vehiculoRepository = VehiculoRepository(vehiculoDAO)
 
         setContent {
             AppNavigation(
                 clienteRepository = clienteRepository,
-                vehiculoRepository = VehiculoRepository,
-                servicioRepository = ServicioRepository,
+                vehiculoRepository = vehiculoRepository,
+                servicioRepository = servicioRepository,
                 registroLavadoRepository = registroLavadoRepository
             )
         }

@@ -21,7 +21,9 @@ import androidx.navigation.NavController
 import com.example.carwash.Models.Vehiculo
 import com.example.carwash.R
 import com.example.carwash.Repository.VehiculoRepository
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @Composable
 fun RegistroVehiculoScreen(
@@ -35,6 +37,7 @@ fun RegistroVehiculoScreen(
     var color by remember { mutableStateOf("") }
     var tipo by remember { mutableStateOf("") }
     var message by remember { mutableStateOf("") }
+    var mensajeError by remember { mutableStateOf("") }
     val scope = rememberCoroutineScope()
 
     Box(
@@ -85,54 +88,50 @@ fun RegistroVehiculoScreen(
                 )
             }
 
+            // Campos de texto para los datos del vehículo
             TextField(
                 value = marca,
                 onValueChange = { marca = it },
                 label = { Text("Marca") },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp)
+                modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)
             )
             TextField(
                 value = modelo,
                 onValueChange = { modelo = it },
                 label = { Text("Modelo") },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp)
+                modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)
             )
             TextField(
                 value = placa,
                 onValueChange = { placa = it },
                 label = { Text("Placa") },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp)
+                modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)
             )
             TextField(
                 value = color,
                 onValueChange = { color = it },
                 label = { Text("Color") },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp)
+                modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)
             )
             TextField(
                 value = tipo,
                 onValueChange = { tipo = it },
                 label = { Text("Tipo de Vehículo") },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp)
+                modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)
             )
 
-            Button(
-                onClick = {
-                    if (marca.isNotEmpty() && modelo.isNotEmpty() && placa.isNotEmpty() && color.isNotEmpty() && tipo.isNotEmpty()) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                // Botón para registrar el vehículo
+                Button(onClick = {
+                    if (marca.isNotEmpty() && modelo.isNotEmpty() && placa.isNotEmpty()
+                        && color.isNotEmpty() && tipo.isNotEmpty()) {
                         scope.launch {
                             val vehiculoID = vehiculoRepository.insertar(
                                 Vehiculo(
-                                    clienteId = clienteId,
+                                    clienteId = clienteId, // Usamos el clienteId pasado
                                     marca = marca,
                                     modelo = modelo,
                                     placa = placa,
@@ -140,24 +139,24 @@ fun RegistroVehiculoScreen(
                                     tipo = tipo
                                 )
                             )
-                            navController.navigate("services/$vehiculoID")
+                            withContext(Dispatchers.Main) {
+                                navController.navigate("services/$vehiculoID") // Pasamos vehiculoID
+                            }
                         }
                     } else {
-                        message = "Por favor, completa todos los campos."
+                        mensajeError = "Todos los campos son obligatorios."
                     }
+                }) {
+                    Text("Registrar Vehículo")
+                }
 
-                },
-                modifier = Modifier.padding(top = 16.dp)
-            ) {
-                Text("Registrar Vehículo")
-            }
-
-            if (message.isNotEmpty()) {
-                Text(
-                    text = message,
-                    color = Color.Red,
-                    modifier = Modifier.padding(top = 16.dp)
-                )
+                if (message.isNotEmpty()) {
+                    Text(
+                        text = message,
+                        color = Color.Red,
+                        modifier = Modifier.padding(top = 16.dp)
+                    )
+                }
             }
         }
     }

@@ -16,33 +16,27 @@ import com.example.carwash.ui.theme.Screen.ServiceSelectionScreen
 @Composable
 fun AppNavigation(
     clienteRepository: ClienteRepository,
-    registroLavadoRepository: RegistroLavadoRepository,
     vehiculoRepository: VehiculoRepository,
-    servicioRepository: ServicioRepository
+    servicioRepository: ServicioRepository,
+    registroLavadoRepository: RegistroLavadoRepository
 ) {
     val navController = rememberNavController()
 
-    NavHost(navController = navController, startDestination = "welcome") {
-        // Pantalla de bienvenida
-        composable("welcome") {
+    NavHost(navController = navController, startDestination = "Home") {
+        composable("Home") {
             BienvenidaScreen(navController = navController)
         }
 
-        // Pantalla de registro de cliente
         composable("register") {
-            RegisterScreen(
-                navController = navController,
-                clienteRepository = clienteRepository
-            )
+            RegisterScreen(navController = navController, clienteRepository = clienteRepository)
         }
 
-        composable(
-            "registrovehiculo/{clienteId}") { backStackEntry ->
+        composable("registrovehiculo/{clienteId}") { backStackEntry ->
             val clienteId = backStackEntry.arguments?.getString("clienteId")?.toInt() ?: 0
             RegistroVehiculoScreen(
                 navController = navController,
-                clienteId = clienteId,
-                vehiculoRepository = vehiculoRepository
+                vehiculoRepository = vehiculoRepository,
+                clienteId = clienteId
             )
         }
 
@@ -56,7 +50,7 @@ fun AppNavigation(
             )
         }
 
-        // Otras pantallas se pueden agregar aquí
+        // Aquí puedes añadir más pantallas como la de historial, etc.
     }
 }
 
