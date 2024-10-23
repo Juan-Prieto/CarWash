@@ -4,7 +4,7 @@ import com.example.carwash.DAO.VehiculoDAO
 import com.example.carwash.Models.Vehiculo
 
 class VehiculoRepository (private val vehiculoDAO: VehiculoDAO){
-    suspend fun insertar(vehiculo: Vehiculo){
+    suspend fun insertar(vehiculo: Vehiculo): Long{
         return vehiculoDAO.insertar(vehiculo)
     }
 
