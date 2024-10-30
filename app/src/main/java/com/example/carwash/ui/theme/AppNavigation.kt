@@ -58,7 +58,6 @@ fun AppNavigation(
             )
         }
 
-        // Aquí puedes añadir más pantallas como la de historial, etc.
     }
 }
 

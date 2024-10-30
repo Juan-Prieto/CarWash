@@ -13,12 +13,9 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -47,21 +44,13 @@ fun RegisterScreen(navController: NavController, clienteRepository: ClienteRepos
         modifier = Modifier
             .fillMaxSize()
     ) {
-        // Imagen de fondo
-        Image(
-            painter = painterResource(id = R.drawable.fondo),
-            contentDescription = "Imagen de fondo",
-            contentScale = ContentScale.Crop,
-            modifier = Modifier.fillMaxSize()
-        )
-
         // Contenido sobre la imagen de fondo
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.SpaceBetween
+                .padding(8.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             item {
                 // Espacio para el logo
@@ -70,95 +59,113 @@ fun RegisterScreen(navController: NavController, clienteRepository: ClienteRepos
                     contentDescription = "Logotipo",
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(32.dp)
-                        .clip(RoundedCornerShape(5.dp))
+                        .padding(16.dp)
                 )
-
                 // Título
                 Text(
                     text = "Registrar Usuario",
-                    fontSize = 28.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.White,
+                    fontSize = 30.sp,
+                    fontWeight = FontWeight.Thin,
+                    color = Color(0xFF070707),
                     textAlign = TextAlign.Center
                 )
-
-                // Card con la descripción
-                Card(
-                    colors = CardDefaults.cardColors(
-                        containerColor = Color(0xFF20244A).copy(alpha = 0.85f)
-                    ),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    elevation = CardDefaults.cardElevation(
-                        defaultElevation = 4.dp
-                    ),
-                    shape = RoundedCornerShape(
-                        topStart = 0.dp,
-                        topEnd = 0.dp,
-                        bottomStart = 8.dp,
-                        bottomEnd = 8.dp
-                    )
-                ) {
-                    Text(
-                        text = "Registra tus datos y pulsa en el botón registrarse para disfrutar de nuestro servicio.",
-                        fontSize = 16.sp,
-                        color = Color.White,
-                        textAlign = TextAlign.Justify,
-                        modifier = Modifier.padding(16.dp)
-                    )
-                }
 
                 // Campos de entrada
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(16.dp),
+                        .padding(8.dp),
+                    verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text(text = "Registrar Usuario", fontSize = 24.sp)
 
-                    // Campos de texto para los datos
-                    TextField(
+                    OutlinedTextField(
                         value = nombre,
                         onValueChange = { nombre = it },
-                        label = { Text("Nombre") },
-                        modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)
+                        label = {Text("Nombre",fontSize = 14.sp)},
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp)
+                            .height(44.dp),
+                        shape = RoundedCornerShape(32.dp)
                     )
-                    TextField(
+
+
+                    OutlinedTextField(
                         value = apellido,
                         onValueChange = { apellido = it },
-                        label = { Text("Apellido") },
-                        modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)
+                        label = {Text("Apellido",fontSize = 14.sp)},
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp)
+                            .height(44.dp),
+                        shape = RoundedCornerShape(32.dp)
+
                     )
-                    TextField(
+
+
+
+                    OutlinedTextField(
                         value = telefono,
                         onValueChange = { telefono = it },
-                        label = { Text("Teléfono") },
-                        modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)
+                        label = {
+                            Text(
+                                "Teléfono",
+                                fontSize = 14.sp
+                            )
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp)
+                            .height(44.dp),
+                        shape = RoundedCornerShape(32.dp)
                     )
-                    TextField(
+                    OutlinedTextField(
                         value = email,
                         onValueChange = { email = it },
-                        label = { Text("Correo Electrónico") },
-                        modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)
+                        label = {
+                            Text(
+                                "Correo Electrónico",
+                                fontSize = 14.sp
+                            )
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp)
+                            .height(44.dp),
+                        shape = RoundedCornerShape(32.dp)
                     )
-                    TextField(
+                    OutlinedTextField(
                         value = direccion,
                         onValueChange = { direccion = it },
-                        label = { Text("Dirección") },
-                        modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)
+                        label = {
+                            Text(
+                                "Dirección",
+                                fontSize = 14.sp
+                            )
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp)
+                            .height(44.dp),
+                        shape = RoundedCornerShape(32.dp)
                     )
-                    TextField(
+                    OutlinedTextField(
                         value = contraseña,
                         onValueChange = { contraseña = it },
-                        label = { Text("Contraseña") },
-                        modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
-                        visualTransformation = PasswordVisualTransformation()
+                        label = {
+                            Text(
+                                "Contraseña",
+                                fontSize = 14.sp
+                            )
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp)
+                            .height(44.dp),
+                        shape = RoundedCornerShape(32.dp)
                     )
                 }
-
                 // Mensajes de error o éxito
                 if (mensajeError.isNotEmpty()) {
                     Text(
@@ -210,15 +217,14 @@ fun RegisterScreen(navController: NavController, clienteRepository: ClienteRepos
                         Text("Registrarse")
                     }
 
-                    // Boton regresar a la pantalla de bienvenido
-                    Button(
-                        onClick = {
-                            navController.navigate("Home")
-                        },
-                        modifier = Modifier.padding(8.dp)
-                    ) {
-                        Text("Volver")
-                    }
+//                    // Boton regresar a la pantalla de bienvenido
+//                    Button(
+//                        onClick = {
+//                            navController.navigate("Home")
+//                        }
+//                    ) {
+//                        Text("Volver")
+//                    }
                 }
             }
         }
