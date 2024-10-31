@@ -116,12 +116,15 @@ fun RegistroItem(
             Text(text = "Fecha de Lavado: ${registro.registroLavado.fechaLavado}", fontSize = 16.sp, color = Color.Black)
             Spacer(modifier = Modifier.height(4.dp))
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(text = "Hora de Inicio: ${registro.registroLavado.horaInicio}", fontSize = 14.sp, color = Color.DarkGray)
-            }
+            val vehiculoInfo = registro.vehiculo?.let { "Vehículo: ${it.marca} ${it.modelo}" } ?: "Vehículo: No disponible"
+            val clienteInfo = registro.cliente?.let { "Cliente: ${it.nombre} ${it.apellido}" } ?: "Cliente: No disponible"
+            val servicioInfo = registro.servicio?.nombre ?: "Servicio: No disponible"
+
+            Text(text = vehiculoInfo, fontSize = 14.sp, color = Color.DarkGray)
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(text = clienteInfo, fontSize = 14.sp, color = Color.DarkGray)
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(text = "Servicio: $servicioInfo", fontSize = 14.sp, color = Color.DarkGray)
             Spacer(modifier = Modifier.height(4.dp))
 
             Text(text = "Precio Total: \$${registro.registroLavado.precioTotal}", fontSize = 16.sp, color = Color.Black)
@@ -163,19 +166,27 @@ fun FacturaDialog(
                 Text(text = "Teléfono: +1 234 567 890")
                 Spacer(modifier = Modifier.height(8.dp))
 
-                Text(text = "Información del Cliente", fontSize = 18.sp, fontWeight = FontWeight.Bold)
-                Text(text = "Nombre: ${registro.cliente.nombre} ${registro.cliente.apellido}")
-                Text(text = "Teléfono: ${registro.cliente.telefono}")
-                Text(text = "Correo: ${registro.cliente.email}")
+                Text(
+                    text = "Información del Cliente",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold
+                )
+                Text(text = "Nombre: ${registro.cliente?.nombre} ${registro.cliente?.apellido}")
+                Text(text = "Teléfono: ${registro.cliente?.telefono}")
+                Text(text = "Correo: ${registro.cliente?.email}")
                 Spacer(modifier = Modifier.height(8.dp))
 
                 Text(text = "Detalle del Servicio", fontSize = 18.sp, fontWeight = FontWeight.Bold)
-                Text(text = "Tipo de Servicio: ${registro.servicio.nombre}")
+                Text(text = "Tipo de Servicio: ${registro.servicio?.nombre}")
                 Text(text = "Hora de Inicio: ${registro.registroLavado.horaInicio}")
                 Text(text = "Hora de Fin: ${registro.registroLavado.horaFin}")
                 Spacer(modifier = Modifier.height(8.dp))
 
-                Text(text = "Valor Total: \$${registro.registroLavado.precioTotal}", fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                Text(
+                    text = "Valor Total: \$${registro.registroLavado.precioTotal}",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold
+                )
             }
         },
         confirmButton = {
@@ -187,19 +198,28 @@ fun FacturaDialog(
                     onClick = {
                         val file = generarFacturaPDF(context, registro)
                         if (file != null) {
-                            Toast.makeText(context, "PDF guardado en: ${file.absolutePath}", Toast.LENGTH_LONG).show()
+                            Toast.makeText(
+                                context,
+                                "PDF guardado en: ${file.absolutePath}",
+                                Toast.LENGTH_LONG
+                            ).show()
                         } else {
-                            Toast.makeText(context, "Error al guardar el PDF", Toast.LENGTH_LONG).show()
+                            Toast.makeText(context, "Error al guardar el PDF", Toast.LENGTH_LONG)
+                                .show()
                         }
                         onDismiss()
                     },
-                    modifier = Modifier.weight(1f).padding(end = 4.dp)
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(end = 4.dp)
                 ) {
                     Text("Descargar PDF")
                 }
                 Button(
                     onClick = onDismiss,
-                    modifier = Modifier.weight(1f).padding(start = 4.dp)
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(start = 4.dp)
                 ) {
                     Text("Cerrar")
                 }

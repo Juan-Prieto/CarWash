@@ -10,18 +10,18 @@ data class RegistroLavadoDetalles(
         parentColumn = "vehiculoId",
         entityColumn = "vehiculoID"
     )
-    val vehiculo: Vehiculo,
+    val vehiculo: Vehiculo?,
 
     @Relation(
         parentColumn = "vehiculoId",
         entityColumn = "clienteID",
         entity = Cliente::class
     )
-    val cliente: Cliente,
+    val cliente: Cliente?,
 
     @Relation(
         parentColumn = "servicioId",
         entityColumn = "servicioID"
     )
-    val servicio: Servicio
+    val servicio: Servicio?
 )
