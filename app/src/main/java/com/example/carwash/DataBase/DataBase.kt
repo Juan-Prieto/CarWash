@@ -1,8 +1,7 @@
 package com.example.carwash.DataBase
 
-
-import androidx.room.Database
 import android.content.Context
+import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.example.carwash.DAO.ClienteDAO
@@ -15,8 +14,8 @@ import com.example.carwash.Models.Servicio
 import com.example.carwash.Models.Vehiculo
 
 @Database(
-    entities = [Cliente::class, Vehiculo::class, RegistroLavado::class,Servicio::class],
-    version = 1,
+    entities = [Cliente::class, Vehiculo::class, RegistroLavado::class, Servicio::class],
+    version = 2, // Versión incrementada de 1 a 2
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -35,7 +34,9 @@ abstract class AppDatabase : RoomDatabase() {
                     context.applicationContext,
                     AppDatabase::class.java,
                     "app_database"
-                ).build()
+                )
+//                    .fallbackToDestructiveMigration()
+                    .build()
                 INSTANCE = instance
                 instance
             }

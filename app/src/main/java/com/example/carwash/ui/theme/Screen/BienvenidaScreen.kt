@@ -26,7 +26,7 @@ fun BienvenidaScreen(navController: NavController) {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
 
-        ) {
+            ) {
             Image(
                 painter = painterResource(id = R.drawable.logo),
                 contentDescription = "Logo",
@@ -42,6 +42,7 @@ fun BienvenidaScreen(navController: NavController) {
                 },
                 modifier = Modifier
                     .padding(8.dp)
+                    .height(50.dp)
                     .fillMaxWidth()
             ) {
                 Text("Registrar")
@@ -52,6 +53,7 @@ fun BienvenidaScreen(navController: NavController) {
 
                 modifier = Modifier
                     .padding(8.dp)
+                    .height(50.dp)
                     .fillMaxWidth()
             )
             {

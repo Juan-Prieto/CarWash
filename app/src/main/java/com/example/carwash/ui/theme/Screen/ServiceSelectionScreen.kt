@@ -1,20 +1,19 @@
 package com.example.carwash.ui.theme.Screen
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import android.app.DatePickerDialog
+import android.app.TimePickerDialog
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccessTime
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -23,6 +22,8 @@ import com.example.carwash.Models.Servicio
 import com.example.carwash.Repository.RegistroLavadoRepository
 import com.example.carwash.Repository.ServicioRepository
 import kotlinx.coroutines.launch
+import java.util.*
+import androidx.compose.ui.platform.LocalContext
 
 @Composable
 fun ServiceSelectionScreen(
@@ -31,6 +32,7 @@ fun ServiceSelectionScreen(
     servicioRepository: ServicioRepository,
     registroLavadoRepository: RegistroLavadoRepository
 ) {
+    val context = LocalContext.current
     val servicios = listOf(
         "Lavado Exterior" to 10000.0,
         "Lavado Interior" to 15000.0,
@@ -43,9 +45,37 @@ fun ServiceSelectionScreen(
     var horaInicio by remember { mutableStateOf("") }
     var horaFin by remember { mutableStateOf("") }
     var mensajeError by remember { mutableStateOf("") }
-    var totalPrice by remember { mutableStateOf(0.0) } // Precio total actualizado
+    var totalPrice by remember { mutableStateOf(0.0) }
     var expanded by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
+
+    // Función para abrir el selector de fecha
+    val showDatePicker = {
+        val calendar = Calendar.getInstance()
+        DatePickerDialog(
+            context,
+            { _, year, month, dayOfMonth ->
+                fechaLavado = "$year-${month + 1}-$dayOfMonth"
+            },
+            calendar.get(Calendar.YEAR),
+            calendar.get(Calendar.MONTH),
+            calendar.get(Calendar.DAY_OF_MONTH)
+        ).show()
+    }
+
+    // Función para abrir el selector de hora
+    val showTimePicker = { onTimeSelected: (String) -> Unit ->
+        val calendar = Calendar.getInstance()
+        TimePickerDialog(
+            context,
+            { _, hourOfDay, minute ->
+                onTimeSelected("${hourOfDay.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}")
+            },
+            calendar.get(Calendar.HOUR_OF_DAY),
+            calendar.get(Calendar.MINUTE),
+            true
+        ).show()
+    }
 
     Column(
         modifier = Modifier
@@ -53,7 +83,7 @@ fun ServiceSelectionScreen(
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = "Seleccionar Servicio", fontSize = 24.sp)
+        Text(text = "Seleccionar Servicio", fontSize = 24.sp, modifier = Modifier.padding(16.dp))
 
         // Dropdown para seleccionar el servicio
         Box(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
@@ -72,43 +102,72 @@ fun ServiceSelectionScreen(
                 servicios.forEach { servicio ->
                     DropdownMenuItem(
                         text = {
-                            Text(text = "${servicio.first} - \$${servicio.second}") // Texto del ítem
+                            Text(text = "${servicio.first} - \$${servicio.second}")
                         },
                         onClick = {
-                            selectedService = servicio // Actualizar el servicio seleccionado
-                            totalPrice = servicio.second // Actualizar el precio total
-                            expanded = false // Cerrar el menú desplegable
+                            selectedService = servicio
+                            totalPrice = servicio.second
+                            expanded = false
                         }
                     )
                 }
             }
         }
 
-        // Campo para ingresar la fecha del lavado
-        TextField(
+        OutlinedTextField(
             value = fechaLavado,
-            onValueChange = { fechaLavado = it },
-            label = { Text("Fecha Lavado (YYYY-MM-DD)") },
-            modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)
+            onValueChange = { },
+            label = { Text("Fecha Lavado") },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+                .height(60.dp),
+            shape = RoundedCornerShape(32.dp),
+            readOnly = true,
+            trailingIcon = {
+                IconButton(onClick = showDatePicker) {
+                    Icon(Icons.Default.DateRange, contentDescription = "Seleccionar Fecha")
+                }
+            },
+            keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next)
         )
 
-        // Campo para ingresar la hora de inicio
-        TextField(
+        OutlinedTextField(
             value = horaInicio,
-            onValueChange = { horaInicio = it },
-            label = { Text("Hora Inicio (HH:MM)") },
-            modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)
+            onValueChange = { },
+            label = { Text("Hora Inicio") },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+                .height(60.dp),
+            shape = RoundedCornerShape(32.dp),
+            readOnly = true,
+            trailingIcon = {
+                IconButton(onClick = { showTimePicker { horaInicio = it } }) {
+                    Icon(Icons.Default.AccessTime, contentDescription = "Seleccionar Hora Inicio")
+                }
+            },
+            keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next)
         )
 
-        // Campo para ingresar la hora de fin
-        TextField(
+        OutlinedTextField(
             value = horaFin,
-            onValueChange = { horaFin = it },
-            label = { Text("Hora Fin (HH:MM)") },
-            modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)
+            onValueChange = { },
+            label = { Text("Hora Fin") },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+                .height(60.dp),
+            shape = RoundedCornerShape(32.dp),
+            readOnly = true,
+            trailingIcon = {
+                IconButton(onClick = { showTimePicker { horaFin = it } }) {
+                    Icon(Icons.Default.AccessTime, contentDescription = "Seleccionar Hora Fin")
+                }
+            },
+            keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done)
         )
 
-        // Mostrar el precio total
         Text(
             text = "Precio Total: \$${totalPrice}",
             fontSize = 18.sp,
@@ -116,40 +175,42 @@ fun ServiceSelectionScreen(
             modifier = Modifier.padding(vertical = 16.dp)
         )
 
-        // Botón para registrar el servicio
-        Button(onClick = {
-            if (selectedService != null && fechaLavado.isNotEmpty() && horaInicio.isNotEmpty() && horaFin.isNotEmpty()) {
-                // Inserción del registro de lavado
-                scope.launch {
-                    registroLavadoRepository.insertar(
-                        RegistroLavado(
-                            vehiculoId = vehiculoId,
-                            servicioId = 1, // Aquí debes gestionar el ID real del servicio seleccionado
-                            fechaLavado = fechaLavado,
-                            horaInicio = horaInicio,
-                            horaFin = horaFin,
-                            precioTotal = totalPrice
-                        )
-                    )
-                    // Registrar el servicio elegido (nombre y precio)
-                    servicioRepository.insertar(
-                        Servicio(
-                            nombre = selectedService?.first ?: "Desconocido",
-                            precio = totalPrice
-                        )
-                    )
-                    navController.navigate("Home")
-                }
-            } else {
-                mensajeError = "Por favor, complete todos los campos."
-            }
-        }) {
-            Text("Confirmar Servicio")
-        }
-
-        // Mostrar mensaje de error
         if (mensajeError.isNotEmpty()) {
             Text(text = mensajeError, color = Color.Red, modifier = Modifier.padding(8.dp))
+        }
+
+        Button(
+            onClick = {
+                if (selectedService != null && fechaLavado.isNotEmpty() && horaInicio.isNotEmpty() && horaFin.isNotEmpty()) {
+                    scope.launch {
+                        registroLavadoRepository.insertar(
+                            RegistroLavado(
+                                vehiculoId = vehiculoId,
+                                servicioId = 1,
+                                fechaLavado = fechaLavado,
+                                horaInicio = horaInicio,
+                                horaFin = horaFin,
+                                precioTotal = totalPrice
+                            )
+                        )
+                        servicioRepository.insertar(
+                            Servicio(
+                                nombre = selectedService?.first ?: "Desconocido",
+                                precio = totalPrice
+                            )
+                        )
+                        navController.navigate("Home")
+                    }
+                } else {
+                    mensajeError = "Por favor, complete todos los campos."
+                }
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+                .height(50.dp)
+        ) {
+            Text("Confirmar Servicio", fontSize = 15.sp)
         }
     }
 }

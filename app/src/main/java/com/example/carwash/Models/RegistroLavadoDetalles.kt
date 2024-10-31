@@ -13,6 +13,13 @@ data class RegistroLavadoDetalles(
     val vehiculo: Vehiculo,
 
     @Relation(
+        parentColumn = "vehiculoId",
+        entityColumn = "clienteID",
+        entity = Cliente::class
+    )
+    val cliente: Cliente,
+
+    @Relation(
         parentColumn = "servicioId",
         entityColumn = "servicioID"
     )

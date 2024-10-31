@@ -21,7 +21,7 @@ interface ClienteDAO {
     suspend fun obtenerID(id: Int): Cliente
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertar(cliente:Cliente): Long
+    suspend fun insertar(cliente: Cliente): Long
 
     @Query("DELETE FROM Clientes WHERE clienteID = :clienteID")
     suspend fun eliminar(clienteID: Int): Int
@@ -29,14 +29,11 @@ interface ClienteDAO {
     @Update
     suspend fun actualizar(cliente: Cliente)
 
-    @Transaction
-    @Query("SELECT * FROM Vehiculos WHERE clienteID = :clienteID")
-    suspend fun obtenerVehiculosCliente(clienteID: Int): List<Vehiculo>
+//    @Transaction
+//    @Query("SELECT * FROM Vehiculos WHERE clienteID = :clienteID")
+//    suspend fun obtenerVehiculosCliente(clienteID: Int): List<Vehiculo>
 
     @Transaction
     @Query("SELECT * FROM clientes")
     fun getAllClientesConVehiculos(): LiveData<List<ClienteVehiculo>>
-
-    @Query("SELECT * FROM Clientes WHERE email = :email AND contraseña = :password")
-    suspend fun iniciarSesion(email: String, password: String): Cliente?
 }

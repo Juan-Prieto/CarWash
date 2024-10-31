@@ -2,6 +2,7 @@ package com.example.carwash.Repository
 
 import com.example.carwash.DAO.RegistrolavadoDAO
 import com.example.carwash.Models.RegistroLavado
+import com.example.carwash.Models.RegistroLavadoDetalles
 
 
 class RegistroLavadoRepository(private val registrolavadoDAO: RegistrolavadoDAO) {
@@ -9,8 +10,8 @@ class RegistroLavadoRepository(private val registrolavadoDAO: RegistrolavadoDAO)
         return registrolavadoDAO.insertar(registrolavado)
     }
 
-    suspend fun obtener(): List<RegistroLavado> {
-        return registrolavadoDAO.obtenerTodos()
+    suspend fun getAllRegistrosConDetalles(): List<RegistroLavadoDetalles> {
+        return registrolavadoDAO.getAllRegistrosConDetalles()
     }
 
     suspend fun obtenerID(id: Int): RegistroLavado {

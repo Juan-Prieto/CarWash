@@ -3,18 +3,16 @@ package com.example.carwash.ui.theme.Screen
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -36,9 +34,13 @@ fun RegistroVehiculoScreen(
     var placa by remember { mutableStateOf("") }
     var color by remember { mutableStateOf("") }
     var tipo by remember { mutableStateOf("") }
-    var message by remember { mutableStateOf("") }
     var mensajeError by remember { mutableStateOf("") }
     val scope = rememberCoroutineScope()
+
+    // Validadores para cada campo
+    val validarMarcaModelo: (String) -> Boolean = { it.matches(Regex("^[a-zA-Z0-9\\s]*$")) }
+    val validarPlaca: (String) -> Boolean = { it.matches(Regex("^[A-Z0-9-]*$")) }
+    val validarColorTipo: (String) -> Boolean = { it.matches(Regex("^[a-zA-Z\\s]*$")) }
 
     Box(
         modifier = Modifier.fillMaxSize()
@@ -54,84 +56,99 @@ fun RegistroVehiculoScreen(
                 contentDescription = "Logo",
                 modifier = Modifier
                     .size(120.dp)
-                    .clip(RoundedCornerShape(5.dp))
+                    .padding(16.dp)
             )
 
             Text(
                 text = "Registrar Vehículo",
                 fontSize = 24.sp,
-                color = Color.White,
-                modifier = Modifier.padding(top = 16.dp)
+                fontWeight = FontWeight.Thin,
+                color = Color(0xFF070707),
+                modifier = Modifier.padding(bottom = 16.dp)
             )
 
-            Card(
-                colors = CardDefaults.cardColors(
-                    containerColor = Color(0xFF20244A).copy(alpha = 0.85f)
-                ),
+            // Campos de entrada con validación
+            OutlinedTextField(
+                value = marca,
+                onValueChange = { if (validarMarcaModelo(it)) marca = it },
+                label = { Text("Marca", fontSize = 14.sp) },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp),
-                elevation = CardDefaults.cardElevation(
-                    defaultElevation = 4.dp
-                ),
-                shape = RoundedCornerShape(
-                    topStart = 0.dp,
-                    topEnd = 0.dp,
-                    bottomStart = 8.dp,
-                    bottomEnd = 8.dp
+                    .padding(16.dp)
+                    .height(60.dp),
+                shape = RoundedCornerShape(32.dp),
+                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next)
+            )
+
+            OutlinedTextField(
+                value = modelo,
+                onValueChange = { if (validarMarcaModelo(it)) modelo = it },
+                label = { Text("Modelo", fontSize = 14.sp) },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+                    .height(60.dp),
+                shape = RoundedCornerShape(32.dp),
+                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next)
+            )
+
+            OutlinedTextField(
+                value = placa,
+                onValueChange = { if (validarPlaca(it)) placa = it },
+                label = { Text("Placa", fontSize = 14.sp) },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+                    .height(60.dp),
+                shape = RoundedCornerShape(32.dp),
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Ascii,
+                    imeAction = ImeAction.Next
                 )
-            ) {
+            )
+
+            OutlinedTextField(
+                value = color,
+                onValueChange = { if (validarColorTipo(it)) color = it },
+                label = { Text("Color", fontSize = 14.sp) },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+                    .height(60.dp),
+                shape = RoundedCornerShape(32.dp),
+                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next)
+            )
+
+            OutlinedTextField(
+                value = tipo,
+                onValueChange = { if (validarColorTipo(it)) tipo = it },
+                label = { Text("Tipo de Vehículo", fontSize = 14.sp) },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+                    .height(60.dp),
+                shape = RoundedCornerShape(32.dp),
+                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done)
+            )
+
+            if (mensajeError.isNotEmpty()) {
                 Text(
-                    text = "Ingresa los datos de tu vehículo y selecciona el servicio que deseas.",
-                    color = Color.White,
-                    modifier = Modifier.padding(16.dp)
+                    text = mensajeError,
+                    color = Color.Red,
+                    modifier = Modifier.padding(8.dp)
                 )
             }
 
-            // Campos de texto para los datos del vehículo
-            TextField(
-                value = marca,
-                onValueChange = { marca = it },
-                label = { Text("Marca") },
-                modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)
-            )
-            TextField(
-                value = modelo,
-                onValueChange = { modelo = it },
-                label = { Text("Modelo") },
-                modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)
-            )
-            TextField(
-                value = placa,
-                onValueChange = { placa = it },
-                label = { Text("Placa") },
-                modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)
-            )
-            TextField(
-                value = color,
-                onValueChange = { color = it },
-                label = { Text("Color") },
-                modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)
-            )
-            TextField(
-                value = tipo,
-                onValueChange = { tipo = it },
-                label = { Text("Tipo de Vehículo") },
-                modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)
-            )
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly
-            ) {
-                // Botón para registrar el vehículo
-                Button(onClick = {
-                    if (marca.isNotEmpty() && modelo.isNotEmpty() && placa.isNotEmpty()
-                        && color.isNotEmpty() && tipo.isNotEmpty()) {
+            // Botón para registrar el vehículo
+            Button(
+                onClick = {
+                    if (marca.isNotBlank() && modelo.isNotBlank() && placa.isNotBlank()
+                        && color.isNotBlank() && tipo.isNotBlank()
+                    ) {
                         scope.launch {
-                            val vehiculoID = vehiculoRepository.insertar(
+                            vehiculoRepository.insertar(
                                 Vehiculo(
-                                    clienteId = clienteId, // Usamos el clienteId pasado
+                                    clienteId = clienteId,
                                     marca = marca,
                                     modelo = modelo,
                                     placa = placa,
@@ -140,23 +157,19 @@ fun RegistroVehiculoScreen(
                                 )
                             )
                             withContext(Dispatchers.Main) {
-                                navController.navigate("services/$vehiculoID") // Pasamos vehiculoID
+                                navController.navigate("services/$clienteId")
                             }
                         }
                     } else {
                         mensajeError = "Todos los campos son obligatorios."
                     }
-                }) {
-                    Text("Registrar Vehículo")
-                }
-
-                if (message.isNotEmpty()) {
-                    Text(
-                        text = message,
-                        color = Color.Red,
-                        modifier = Modifier.padding(top = 16.dp)
-                    )
-                }
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+                    .height(50.dp)
+            ) {
+                Text("Registrar Vehículo", fontSize = 15.sp)
             }
         }
     }

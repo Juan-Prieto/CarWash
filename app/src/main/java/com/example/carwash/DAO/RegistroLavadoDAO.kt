@@ -30,5 +30,10 @@ interface RegistrolavadoDAO {
 
     @Transaction
     @Query("SELECT * FROM registroslavado WHERE registroID = :registroID")
-    fun getRegistroLavadoConDetalles(registroID: Int): LiveData<RegistroLavadoDetalles>
+    suspend fun getRegistroLavadoConDetalles(registroID: Int): RegistroLavadoDetalles
+
+    @Transaction
+    @Query("SELECT * FROM registroslavado")
+    suspend fun getAllRegistrosConDetalles(): List<RegistroLavadoDetalles>
+
 }
