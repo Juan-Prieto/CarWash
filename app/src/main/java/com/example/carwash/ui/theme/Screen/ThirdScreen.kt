@@ -43,7 +43,7 @@ fun SelectYourCarScreenThree(navController: NavController) {
                 title = {},
                 actions = {
                     TextButton(onClick = {
-                        navController.navigate("Login")
+                        navController.navigate("MainScreen")
                     }) {
                         Text(text = "Skip", color = Color.Blue, fontSize = 16.sp)
                     }
@@ -107,7 +107,7 @@ fun SelectYourCarScreenThree(navController: NavController) {
             // Botón Next
             Button(
                 onClick = {
-                    navController.navigate("Login")
+                    navController.navigate("MainScreen")
                 },
                 modifier = Modifier
                     .fillMaxWidth()

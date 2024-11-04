@@ -3,6 +3,7 @@ package com.example.carwash.ui.theme.Screen
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -19,6 +20,8 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
@@ -39,6 +42,7 @@ fun RegistrationForm(navController: NavController, clienteRepository: ClienteRep
     var telefono by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var contraseña by remember { mutableStateOf("") }
+    var mostrarContraseña by remember { mutableStateOf(false) }
     var mensajeError by remember { mutableStateOf("") }
     var mensajeExito by remember { mutableStateOf("") }
     val scope = rememberCoroutineScope()
@@ -166,12 +170,13 @@ fun RegistrationForm(navController: NavController, clienteRepository: ClienteRep
                         keyboardType = KeyboardType.Password,
                         imeAction = ImeAction.Done
                     ),
+                    visualTransformation = if (mostrarContraseña) VisualTransformation.None else PasswordVisualTransformation(),
                     trailingIcon = {
-                        IconButton(onClick = { /* Toggle password visibility */ }) {
+                        IconButton(onClick = { mostrarContraseña = !mostrarContraseña }) {
                             Icon(
-                                imageVector = Icons.Default.VisibilityOff,
-                                contentDescription = "Toggle Password Visibility",
-                                )
+                                imageVector = if (mostrarContraseña) Icons.Default.Visibility else Icons.Default.VisibilityOff,
+                                contentDescription = if (mostrarContraseña) "Ocultar contraseña" else "Mostrar contraseña"
+                            )
                         }
                     },
                     modifier = Modifier
@@ -242,7 +247,7 @@ fun RegistrationForm(navController: NavController, clienteRepository: ClienteRep
                                         )
                                     )
                                     withContext(Dispatchers.Main) {
-                                        navController.navigate("IntroductionTwo")
+                                        navController.navigate("Login")
                                     }
                                 }
                             } else {
@@ -263,6 +268,4 @@ fun RegistrationForm(navController: NavController, clienteRepository: ClienteRep
             }
         }
     }
-
-
 }

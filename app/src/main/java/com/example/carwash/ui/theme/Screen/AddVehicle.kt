@@ -23,11 +23,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavController
 import com.example.carwash.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddVehicleScreen() {
+fun AddVehicleScreen(navController: NavController) {
     var vehicleType by remember { mutableStateOf("SUV") }
     var otherVehicleType by remember { mutableStateOf("") }
     val vehicleTypes = remember { mutableStateListOf("SUV", "Sedan").apply { add("Other") } }

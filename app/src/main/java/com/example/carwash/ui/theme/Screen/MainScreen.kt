@@ -16,11 +16,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavController
 import com.example.carwash.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CarWashScreen() {
+fun CarWashScreen(navController: NavController) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -69,7 +70,9 @@ fun CarWashScreen() {
 
             // Botón de crear cuenta
             Button(
-                onClick = { /* Acción de crear cuenta */ },
+                onClick = {
+                    navController.navigate("Register")
+                },
                 colors = ButtonDefaults.buttonColors(containerColor = Color.White),
                 modifier = Modifier
                     .fillMaxWidth()
@@ -84,7 +87,9 @@ fun CarWashScreen() {
 
             // Botón de iniciar sesión
             OutlinedButton(
-                onClick = { /* Acción de iniciar sesión */ },
+                onClick = {
+                    navController.navigate("Login")
+                },
                 colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.White),
                 border = BorderStroke(1.dp, Color.White),
                 modifier = Modifier

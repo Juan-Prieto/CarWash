@@ -1,6 +1,7 @@
 package com.example.carwash.ui.theme
 
 import androidx.compose.runtime.Composable
+import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -32,26 +33,39 @@ fun AppNavigation(
 
     NavHost(navController = navController, startDestination = "IntroductionOne") {
 
-        composable("IntroductionOne"){
-            //SelectYourCarScreen(navController = navController)
+        composable("Introduction"){ // Para hacer pruebas
             //LoginScreen()
             //RegistrationForm(navController = navController, clienteRepository = clienteRepository)
             //CarWashScreen()
-            AddVehicleScreen()
-
+            //AddVehicleScreen(navController = navController)
         }
 
-        composable("IntroductionTwo"){
-            //SelectYourCarScreenTwo(navController = navController)
-            LoginScreen()
+        composable("IntroductionOne"){ // Primera pantalla
+            SelectYourCarScreen(navController = navController)
         }
 
-        composable("IntroductionThree"){
+        composable("IntroductionTwo") { // Segunda pantalla
+            SelectYourCarScreenTwo(navController = navController)
+        }
+
+        composable("IntroductionThree"){ // Tercera pantalla
             SelectYourCarScreenThree(navController = navController)
         }
 
-        composable("Login") {
-            BienvenidaScreen(navController = navController)
+        composable("MainScreen"){ // Pantalla Principal
+            CarWashScreen(navController = navController)
+        }
+
+        composable("Register") { // Pantalla de Registro Cliente
+            RegistrationForm(navController = navController, clienteRepository = clienteRepository)
+        }
+
+        composable("Login") { // Pantalla de iniciar sesión
+            LoginScreen(navController = navController, clienteRepository = clienteRepository)
+        }
+
+        composable("AddVehicle"){ // Pantalla para ingresar vehiculo
+            AddVehicleScreen(navController = navController)
         }
 
         composable("List") {
@@ -61,9 +75,7 @@ fun AppNavigation(
             )
         }
 
-        composable("register") {
-            RegisterScreen(navController = navController, clienteRepository = clienteRepository)
-        }
+
 
         composable("registrovehiculo/{clienteId}") { backStackEntry ->
             val clienteId = backStackEntry.arguments?.getString("clienteId")?.toInt() ?: 0

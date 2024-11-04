@@ -42,7 +42,7 @@ fun SelectYourCarScreenTwo(navController: NavController) {
                 title = {},
                 actions = {
                     TextButton(onClick = {
-                        navController.navigate("Login")
+                        navController.navigate("MainScreen")
                     }) {
                         Text(text = "Skip", color = Color.Blue, fontSize = 16.sp)
                     }
