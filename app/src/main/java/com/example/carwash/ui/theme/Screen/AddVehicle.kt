@@ -7,6 +7,11 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -22,173 +27,233 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import com.example.carwash.R
+import kotlinx.coroutines.launch
+
+
+import androidx.compose.runtime.*
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
+import com.example.carwash.Models.Vehiculo
+import com.example.carwash.Repository.VehiculoRepository
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddVehicleScreen(navController: NavController) {
+fun AddVehicleScreen(clienteId: Int, navController: NavController, vehiculoRepository: VehiculoRepository) {
+
     var vehicleType by remember { mutableStateOf("SUV") }
     var otherVehicleType by remember { mutableStateOf("") }
-    val vehicleTypes = remember { mutableStateListOf("SUV", "Sedan").apply { add("Other") } }
+    val vehicleTypes = remember { mutableStateListOf("SUV", "Sedan", "Minivan", "Roadster").apply { add("Other") } }
     val scope = rememberCoroutineScope()
+
+    var brand by remember { mutableStateOf("") }
+    var model by remember { mutableStateOf("") }
+    var plateNumber by remember { mutableStateOf("") }
+    var colorVehicle by remember { mutableStateOf(Color.Transparent) }
+
+    var showBottomSheet by remember { mutableStateOf(false) }
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val coroutineScope = rememberCoroutineScope()
+
+    IconButton(
+        onClick = {
+            navController.navigate("home")
+        },
+        modifier = Modifier
+            .padding(top = 20.dp),
+    ) {
+        Icon(
+            imageVector = Icons.Default.ArrowBack,
+            contentDescription = "Back",
+            tint = Color.Black
+        )
+    }
 
     Box(
         modifier = Modifier
+            .padding(16.dp)
             .fillMaxSize(),
-        contentAlignment = Alignment.Center,
-    ){
-        Card(
-            modifier = Modifier
-                .padding(1.dp)
-                .fillMaxWidth(0.9f)
-                .wrapContentHeight(),
-            colors = CardDefaults.cardColors(containerColor = Color.Transparent)
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+
+            horizontalAlignment = Alignment.Start
         ) {
-            Column(
+            // Título
+            Text(
+                text = "Add a vehicle",
+                style = MaterialTheme.typography.headlineSmall.copy(
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 24.sp
+                ),
+                modifier = Modifier.padding(bottom = 8.dp)
+            )
+
+            // Subtítulo
+            Text(
+                text = "Select your type of vehicle",
+                style = MaterialTheme.typography.bodyMedium,
+                color = Color.Gray,
+                modifier = Modifier.padding(bottom = 16.dp)
+            )
+
+            // Tipos de vehículos
+            LazyRow(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .padding(16.dp)
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                // Título
-                Text(
-                    text = "Add a vehicle",
-                    style = MaterialTheme.typography.headlineSmall.copy(
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 24.sp
-                    ),
-                    modifier = Modifier.padding(bottom = 8.dp)
-                )
-
-                // Subtítulo
-                Text(
-                    text = "Select your type of vehicle",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = Color.Gray,
-                    modifier = Modifier.padding(bottom = 16.dp)
-                )
-
-                // Tipos de vehículos
-                LazyRow(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 16.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    items(vehicleTypes.size) { index ->
-                        val type = vehicleTypes[index]
-                        VehicleTypeOption(type = type, isSelected = (vehicleType == type)) {
-                            vehicleType = type
-                        }
-
+                items(vehicleTypes.size) { index ->
+                    val type = vehicleTypes[index]
+                    VehicleTypeOption(type = type, isSelected = (vehicleType == type)) {
+                        vehicleType = type
                     }
+
                 }
+            }
 
-                // Campo de texto adicional si se selecciona "Other"
-                if (vehicleType == "Other") {
-                    OutlinedTextField(
-                        value = otherVehicleType,
-                        onValueChange = {
-                            otherVehicleType = it
-                        },
-                        label = { Text("Specify Vehicle Type") },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(bottom = 16.dp)
-                    )
-
-                    Button(
-                        onClick = {
-                            if (otherVehicleType.isNotEmpty() && !vehicleTypes.contains(otherVehicleType)) {
-                                vehicleTypes.add(vehicleTypes.size - 1, otherVehicleType)
-                                vehicleType = otherVehicleType
-                            }
-                        },
-                        modifier = Modifier.padding(bottom = 16.dp)
-                    ) {
-                        Text("Add Vehicle Type")
-                    }
-                }
-
-                // Campos de entrada de texto
+            // Campo de texto adicional si se selecciona "Other"
+            if (vehicleType == "Other") {
                 OutlinedTextField(
-                    value = "",
-                    onValueChange = {},
-                    label = { Text("Brand") },
+                    value = otherVehicleType,
+                    onValueChange = {
+                        otherVehicleType = it
+                    },
+                    label = { Text("Specify Vehicle Type") },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(bottom = 16.dp)
                 )
 
-                OutlinedTextField(
-                    value = "",
-                    onValueChange = {},
-                    label = { Text("Model") },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 16.dp)
-                )
-
-                OutlinedTextField(
-                    value = "",
-                    onValueChange = {},
-                    label = { Text("Plate Number (Optional)") },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 16.dp)
-                )
-
-                // Selección de color
-                Text(
-                    text = "Select Color",
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.padding(bottom = 8.dp)
-                )
-
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 60.dp),
-                    horizontalArrangement = Arrangement.spacedBy(30.dp)
-                ) {
-                    listOf(Color.LightGray, Color.Gray, Color.DarkGray, Color.Black, Color.Red, Color.Blue).forEach { color ->
-                        Box(
-                            modifier = Modifier
-                                .size(30.dp)
-                                .background(color, CircleShape)
-                                .clickable { }
-                        )
-                    }
-                }
-
-                // Botón Guardar
                 Button(
-                    onClick = { /* Acción para guardar el vehículo */ },
-                    colors = ButtonDefaults.buttonColors(containerColor = Color.Blue),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(50.dp),
-                    shape = RoundedCornerShape(8.dp)
+                    onClick = {
+                        if (otherVehicleType.isNotEmpty() && !vehicleTypes.contains(otherVehicleType)) {
+                            vehicleTypes.add(vehicleTypes.size - 1, otherVehicleType)
+                            vehicleType = otherVehicleType
+                        }
+                    },
+                    modifier = Modifier.padding(bottom = 16.dp)
                 ) {
-                    Text(
-                        text = "Save Vehicle",
-                        color = Color.White,
-                        style = MaterialTheme.typography.labelLarge.copy(
-                            fontWeight = FontWeight.Bold
-                        )
+                    Text("Add Vehicle Type")
+                }
+
+            }
+
+            // Campos de entrada de texto
+            OutlinedTextField(
+                value = brand,
+                onValueChange = {
+                    brand = it
+                },
+                label = { Text("Brand") },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp)
+            )
+
+            OutlinedTextField(
+                value = model,
+                onValueChange = {
+                    model  = it
+                },
+                label = { Text("Model") },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp)
+            )
+
+            OutlinedTextField(
+                value = plateNumber,
+                onValueChange = {
+                    plateNumber = it
+                },
+                label = { Text("Plate Number (Optional)") },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp)
+            )
+
+            // Selección de color
+            Text(
+                text = "Select Color",
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.padding(bottom = 8.dp)
+            )
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 60.dp),
+                horizontalArrangement = Arrangement.spacedBy(30.dp)
+            ) {
+                listOf(
+                    Color.LightGray,
+                    Color.Gray,
+                    Color.DarkGray,
+                    Color.Black,
+                    Color.Red,
+                    Color.Blue
+                ).forEach { color ->
+                    Box(
+                        modifier = Modifier
+                            .size(30.dp)
+                            .background(color, CircleShape)
+                            .clickable {
+                                colorVehicle = color
+                            }
                     )
                 }
             }
+
+            // Botón Guardar
+            Button(
+                onClick = {
+                    showBottomSheet = true
+                    scope.launch {
+                        Vehiculo(
+                            clienteId = clienteId,
+                            marca = brand,
+                            modelo = model,
+                            placa = plateNumber,
+                            color = colorToHex(colorVehicle),
+                            tipo = vehicleType
+                        )
+                    }
+                },
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1A73E8)),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(50.dp),
+                shape = RoundedCornerShape(8.dp)
+            ) {
+                Text(
+                    text = "Save Vehicle",
+                    color = Color.White,
+                    style = MaterialTheme.typography.labelLarge.copy(
+                        fontWeight = FontWeight.Bold
+                    )
+                )
+            }
+
+            if (showBottomSheet){
+                ShowSaveDialog()
+            }
+
         }
     }
+
 }
+
 @Composable
 fun VehicleTypeOption(type: String, isSelected: Boolean = false, onClick: () -> Unit) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.clickable { onClick() }
-    ){
+    ) {
 
         Box(
             modifier = Modifier
@@ -218,4 +283,58 @@ fun VehicleTypeOption(type: String, isSelected: Boolean = false, onClick: () -> 
             }
         }
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ShowSaveDialog() {
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val coroutineScope = rememberCoroutineScope()
+
+    ModalBottomSheet(
+        onDismissRequest = {
+            coroutineScope.launch {
+                sheetState.hide()
+            }
+        },
+        sheetState = sheetState
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 17.dp)
+                .height(200.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.fillMaxHeight()
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(80.dp)
+                        .background(Color(0xFF1A73E8), CircleShape),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Check,
+                        contentDescription = "Saved Icon",
+                        tint = Color.White,
+                        modifier = Modifier.size(50.dp)
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Text(
+                    text = "Vehicle Saved!",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+        }
+    }
+}
+fun colorToHex(color: Color): String {
+    return "#" + Integer.toHexString(color.toArgb()).substring(2).uppercase()
 }

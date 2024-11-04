@@ -9,9 +9,9 @@ import androidx.room.PrimaryKey
 data class Vehiculo(
     @PrimaryKey(autoGenerate = true) val vehiculoID: Int = 0,
     val clienteId: Int,
-    val marca: String,
-    val modelo: String,
-    val placa: String,
-    val color: String,
-    val tipo: String
+    val marca: String, //
+    val modelo: String, //
+    val placa: String, //
+    val color: String, //
+    val tipo: String //
 )
