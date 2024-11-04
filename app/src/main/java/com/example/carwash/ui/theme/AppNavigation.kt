@@ -8,6 +8,7 @@ import com.example.carwash.Repository.ClienteRepository
 import com.example.carwash.Repository.RegistroLavadoRepository
 import com.example.carwash.Repository.ServicioRepository
 import com.example.carwash.Repository.VehiculoRepository
+import com.example.carwash.ui.theme.Screen.AddVehicleScreen
 import com.example.carwash.ui.theme.Screen.BienvenidaScreen
 import com.example.carwash.ui.theme.Screen.CarWashScreen
 import com.example.carwash.ui.theme.Screen.LoginScreen
@@ -34,9 +35,9 @@ fun AppNavigation(
         composable("IntroductionOne"){
             //SelectYourCarScreen(navController = navController)
             //LoginScreen()
-            RegistrationForm()
+            //RegistrationForm()
             //CarWashScreen()
-
+            AddVehicleScreen()
         }
 
         composable("IntroductionTwo"){
