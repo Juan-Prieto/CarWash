@@ -11,6 +11,7 @@ import com.example.carwash.Repository.ServicioRepository
 import com.example.carwash.Repository.VehiculoRepository
 import com.example.carwash.ui.theme.Screen.AddVehicleScreen
 import com.example.carwash.ui.theme.Screen.BienvenidaScreen
+import com.example.carwash.ui.theme.Screen.CarWashRequestScreen
 import com.example.carwash.ui.theme.Screen.CarWashScreen
 import com.example.carwash.ui.theme.Screen.LoginScreen
 import com.example.carwash.ui.theme.Screen.RegisterScreen
@@ -31,7 +32,7 @@ fun AppNavigation(
 ) {
     val navController = rememberNavController()
 
-    NavHost(navController = navController, startDestination = "AddVehicle/{clienteId}") {
+    NavHost(navController = navController, startDestination = "MainScreen") {
 
         composable("Introduction"){ // Para hacer pruebas
             //LoginScreen()
@@ -92,6 +93,14 @@ fun AppNavigation(
                 servicioRepository = servicioRepository,
                 registroLavadoRepository = registroLavadoRepository
             )
+        }
+
+        composable("IntroductionOne"){ // Primera pantalla
+            SelectYourCarScreen(navController = navController)
+        }
+
+        composable("Services"){
+            CarWashRequestScreen(vehiculoRepository = vehiculoRepository)
         }
 
     }
