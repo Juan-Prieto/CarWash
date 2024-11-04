@@ -35,13 +35,15 @@ fun AppNavigation(
         composable("IntroductionOne"){
             //SelectYourCarScreen(navController = navController)
             //LoginScreen()
-            //RegistrationForm()
+            //RegistrationForm(navController = navController, clienteRepository = clienteRepository)
             //CarWashScreen()
             AddVehicleScreen()
+
         }
 
         composable("IntroductionTwo"){
-            SelectYourCarScreenTwo(navController = navController)
+            //SelectYourCarScreenTwo(navController = navController)
+            LoginScreen()
         }
 
         composable("IntroductionThree"){

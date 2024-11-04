@@ -10,5 +10,5 @@ data class Cliente(
     val apellido: String,
     val telefono: String,
     val email: String,
-    val direccion: String
+    val contraseña: String
 )

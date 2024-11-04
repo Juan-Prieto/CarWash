@@ -14,6 +14,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -25,13 +26,14 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
+
 @Composable
 fun RegisterScreen(navController: NavController, clienteRepository: ClienteRepository) {
     var nombre by remember { mutableStateOf("") }
     var apellido by remember { mutableStateOf("") }
     var telefono by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
-    var direccion by remember { mutableStateOf("") }
+    var contraseña by remember { mutableStateOf("") }
     var mensajeError by remember { mutableStateOf("") }
     var mensajeExito by remember { mutableStateOf("") }
     val scope = rememberCoroutineScope()
@@ -40,7 +42,6 @@ fun RegisterScreen(navController: NavController, clienteRepository: ClienteRepos
     val validarTelefono: (String) -> Boolean = { it.matches(Regex("^[0-9+\\-()\\s]*$")) }
     val validarNombreApellido: (String) -> Boolean = { it.matches(Regex("^[a-zA-Z\\s]*$")) }
     val validarEmail: (String) -> Boolean = { it.matches(Regex("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}\$")) }
-    val validarDireccion: (String) -> Boolean = { it.matches(Regex("^[a-zA-Z0-9\\s,.-]*$")) }
 
     Box(
         modifier = Modifier.fillMaxSize()
@@ -75,6 +76,8 @@ fun RegisterScreen(navController: NavController, clienteRepository: ClienteRepos
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
+
+
                     OutlinedTextField(
                         value = nombre,
                         onValueChange = {
@@ -138,17 +141,14 @@ fun RegisterScreen(navController: NavController, clienteRepository: ClienteRepos
                     )
 
                     OutlinedTextField(
-                        value = direccion,
-                        onValueChange = {
-                            if (validarDireccion(it)) direccion = it
-                        },
-                        label = { Text("Dirección", fontSize = 14.sp) },
-                        keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
+                        value = contraseña,
+                        onValueChange = { contraseña = it },
+                        label = { Text("Contraseña") },
+                        visualTransformation = PasswordVisualTransformation(),
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(16.dp)
-                            .height(60.dp),
-                        shape = RoundedCornerShape(32.dp)
+                            .padding(bottom = 16.dp)
                     )
                 }
 
@@ -175,7 +175,7 @@ fun RegisterScreen(navController: NavController, clienteRepository: ClienteRepos
                     Button(
                         onClick = {
                             if (nombre.isNotBlank() && apellido.isNotBlank() && telefono.isNotBlank() &&
-                                email.isNotBlank() && direccion.isNotBlank()
+                                email.isNotBlank() && contraseña.isNotBlank()
                             ) {
                                 // Validación al momento de enviar el formulario
                                 if (validarEmail(email)) {
@@ -186,7 +186,7 @@ fun RegisterScreen(navController: NavController, clienteRepository: ClienteRepos
                                                 apellido = apellido,
                                                 telefono = telefono,
                                                 email = email,
-                                                direccion = direccion
+                                                contraseña = contraseña
                                             )
                                         )
                                         withContext(Dispatchers.Main) {

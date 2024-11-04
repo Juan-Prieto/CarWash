@@ -24,4 +24,9 @@ class ClienteRepository(private val clienteDAO: ClienteDAO){
     suspend fun actualizar(cliente : Cliente) {
         return clienteDAO.actualizar(cliente)
     }
+
+    suspend fun iniciarSesion(telefono: String, contraseña: String): Cliente? {
+        return clienteDAO.iniciarSesion(telefono, contraseña)
+    }
+
 }

@@ -20,6 +20,9 @@ interface ClienteDAO {
     @Query("SELECT * FROM Clientes WHERE clienteID = :id")
     suspend fun obtenerID(id: Int): Cliente
 
+    @Query("SELECT * FROM Clientes WHERE telefono = :telefono AND contraseña = :contraseña")
+    suspend fun iniciarSesion(telefono: String, contraseña: String): Cliente?
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertar(cliente: Cliente): Long
 
@@ -29,11 +32,15 @@ interface ClienteDAO {
     @Update
     suspend fun actualizar(cliente: Cliente)
 
-//    @Transaction
-//    @Query("SELECT * FROM Vehiculos WHERE clienteID = :clienteID")
-//    suspend fun obtenerVehiculosCliente(clienteID: Int): List<Vehiculo>
-
     @Transaction
     @Query("SELECT * FROM clientes")
     fun getAllClientesConVehiculos(): LiveData<List<ClienteVehiculo>>
 }
+
+
+
+
+
+//    @Transaction
+//    @Query("SELECT * FROM Vehiculos WHERE clienteID = :clienteID")
+//    suspend fun obtenerVehiculosCliente(clienteID: Int): List<Vehiculo>
