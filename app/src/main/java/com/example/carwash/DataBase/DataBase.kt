@@ -5,7 +5,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.example.carwash.DAO.ClienteDAO
-import com.example.carwash.DAO.RegistrolavadoDAO
+import com.example.carwash.DAO.RegistroLavadoDAO
 import com.example.carwash.DAO.ServicioDAO
 import com.example.carwash.DAO.VehiculoDAO
 import com.example.carwash.Models.Cliente
@@ -21,7 +21,7 @@ import com.example.carwash.Models.Vehiculo
 abstract class AppDatabase : RoomDatabase() {
     abstract fun clienteDAO(): ClienteDAO
     abstract fun vehiculoDAO(): VehiculoDAO
-    abstract fun registroLavadoDAO(): RegistrolavadoDAO
+    abstract fun registroLavadoDAO(): RegistroLavadoDAO
     abstract fun servicioDAO(): ServicioDAO
 
     companion object {

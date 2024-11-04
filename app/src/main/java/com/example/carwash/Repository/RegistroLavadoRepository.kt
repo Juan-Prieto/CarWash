@@ -1,11 +1,11 @@
 package com.example.carwash.Repository
 
-import com.example.carwash.DAO.RegistrolavadoDAO
+import com.example.carwash.DAO.RegistroLavadoDAO
 import com.example.carwash.Models.RegistroLavado
 import com.example.carwash.Models.RegistroLavadoDetalles
 
 
-class RegistroLavadoRepository(private val registrolavadoDAO: RegistrolavadoDAO) {
+class RegistroLavadoRepository(private val registrolavadoDAO: RegistroLavadoDAO) {
     suspend fun insertar(registrolavado: RegistroLavado) {
         return registrolavadoDAO.insertar(registrolavado)
     }

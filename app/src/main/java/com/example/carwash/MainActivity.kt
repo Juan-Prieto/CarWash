@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import com.example.carwash.DAO.ClienteDAO
-import com.example.carwash.DAO.RegistrolavadoDAO
+import com.example.carwash.DAO.RegistroLavadoDAO
 import com.example.carwash.DAO.ServicioDAO
 import com.example.carwash.DAO.VehiculoDAO
 import com.example.carwash.DataBase.AppDatabase
@@ -17,7 +17,7 @@ import com.example.carwash.ui.theme.AppNavigation
 class MainActivity : ComponentActivity() {
 
     private lateinit var clienteDAO: ClienteDAO
-    private lateinit var registroLavadoDAO: RegistrolavadoDAO
+    private lateinit var registroLavadoDAO: RegistroLavadoDAO
     private lateinit var servicioDAO: ServicioDAO
     private lateinit var vehiculoDAO: VehiculoDAO
 

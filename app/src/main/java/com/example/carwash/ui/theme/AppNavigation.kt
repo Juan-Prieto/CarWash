@@ -9,9 +9,14 @@ import com.example.carwash.Repository.RegistroLavadoRepository
 import com.example.carwash.Repository.ServicioRepository
 import com.example.carwash.Repository.VehiculoRepository
 import com.example.carwash.ui.theme.Screen.BienvenidaScreen
+import com.example.carwash.ui.theme.Screen.LoginScreen
 import com.example.carwash.ui.theme.Screen.RegisterScreen
+import com.example.carwash.ui.theme.Screen.RegistrationForm
 import com.example.carwash.ui.theme.Screen.RegistroListScreen
 import com.example.carwash.ui.theme.Screen.RegistroVehiculoScreen
+import com.example.carwash.ui.theme.Screen.SelectYourCarScreen
+import com.example.carwash.ui.theme.Screen.SelectYourCarScreenThree
+import com.example.carwash.ui.theme.Screen.SelectYourCarScreenTwo
 import com.example.carwash.ui.theme.Screen.ServiceSelectionScreen
 
 @Composable
@@ -23,8 +28,23 @@ fun AppNavigation(
 ) {
     val navController = rememberNavController()
 
-    NavHost(navController = navController, startDestination = "Home") {
-        composable("Home") {
+    NavHost(navController = navController, startDestination = "IntroductionOne") {
+
+        composable("IntroductionOne"){
+            //SelectYourCarScreen(navController = navController)
+            //LoginScreen()
+            RegistrationForm()
+        }
+
+        composable("IntroductionTwo"){
+            SelectYourCarScreenTwo(navController = navController)
+        }
+
+        composable("IntroductionThree"){
+            SelectYourCarScreenThree(navController = navController)
+        }
+
+        composable("Login") {
             BienvenidaScreen(navController = navController)
         }
 
