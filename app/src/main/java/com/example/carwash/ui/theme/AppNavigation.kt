@@ -11,7 +11,6 @@ import com.example.carwash.Repository.ServicioRepository
 import com.example.carwash.Repository.VehiculoRepository
 import com.example.carwash.ui.theme.Screen.AddVehicleScreen
 import com.example.carwash.ui.theme.Screen.BienvenidaScreen
-import com.example.carwash.ui.theme.Screen.CarWashRequestScreen
 import com.example.carwash.ui.theme.Screen.CarWashScreen
 import com.example.carwash.ui.theme.Screen.LoginScreen
 import com.example.carwash.ui.theme.Screen.RegisterScreen
@@ -32,7 +31,7 @@ fun AppNavigation(
 ) {
     val navController = rememberNavController()
 
-    NavHost(navController = navController, startDestination = "MainScreen") {
+    NavHost(navController = navController, startDestination = "IntroductionOne") {
 
         composable("Introduction"){ // Para hacer pruebas
             //LoginScreen()
@@ -64,11 +63,13 @@ fun AppNavigation(
             LoginScreen(navController = navController, clienteRepository = clienteRepository)
         }
 
-        composable("AddVehicle/{clienteId}"){ backStackEntry ->// Pantalla para ingresar vehiculo
+        composable("AddVehicle/{clienteId}") { backStackEntry ->
             val clienteId = backStackEntry.arguments?.getString("clienteId")?.toInt() ?: 0
-            AddVehicleScreen(clienteId = clienteId, navController = navController, vehiculoRepository = vehiculoRepository)
+            AddVehicleScreen(clienteId, navController, vehiculoRepository)
         }
 
+
+//////////////////////////////////////
         composable("List") {
             RegistroListScreen(
                 navController = navController,
@@ -95,14 +96,16 @@ fun AppNavigation(
             )
         }
 
-        composable("IntroductionOne"){ // Primera pantalla
-            SelectYourCarScreen(navController = navController)
-        }
+    }
 
-        composable("Services"){
-            CarWashRequestScreen(vehiculoRepository = vehiculoRepository)
-        }
+
+
+
+
+
+
+
+//
 
     }
-}
 

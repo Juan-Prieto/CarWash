@@ -7,11 +7,9 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -30,14 +28,11 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.carwash.R
 import kotlinx.coroutines.launch
-
-
-import androidx.compose.runtime.*
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
 import com.example.carwash.Models.Vehiculo
 import com.example.carwash.Repository.VehiculoRepository
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -55,8 +50,8 @@ fun AddVehicleScreen(clienteId: Int, navController: NavController, vehiculoRepos
     var colorVehicle by remember { mutableStateOf(Color.Transparent) }
 
     var showBottomSheet by remember { mutableStateOf(false) }
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-    val coroutineScope = rememberCoroutineScope()
+//    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+//    val coroutineScope = rememberCoroutineScope()
 
     IconButton(
         onClick = {
@@ -79,7 +74,6 @@ fun AddVehicleScreen(clienteId: Int, navController: NavController, vehiculoRepos
         contentAlignment = Alignment.Center
     ) {
         Column(
-
             horizontalAlignment = Alignment.Start
         ) {
             // Título
@@ -112,7 +106,6 @@ fun AddVehicleScreen(clienteId: Int, navController: NavController, vehiculoRepos
                     VehicleTypeOption(type = type, isSelected = (vehicleType == type)) {
                         vehicleType = type
                     }
-
                 }
             }
 
@@ -140,7 +133,6 @@ fun AddVehicleScreen(clienteId: Int, navController: NavController, vehiculoRepos
                 ) {
                     Text("Add Vehicle Type")
                 }
-
             }
 
             // Campos de entrada de texto
@@ -158,7 +150,7 @@ fun AddVehicleScreen(clienteId: Int, navController: NavController, vehiculoRepos
             OutlinedTextField(
                 value = model,
                 onValueChange = {
-                    model  = it
+                    model = it
                 },
                 label = { Text("Model") },
                 modifier = Modifier
@@ -212,9 +204,9 @@ fun AddVehicleScreen(clienteId: Int, navController: NavController, vehiculoRepos
             // Botón Guardar
             Button(
                 onClick = {
-                    showBottomSheet = true
+                    // Insertar el vehículo en la base de datos
                     scope.launch {
-                        Vehiculo(
+                        val vehiculo = Vehiculo(
                             clienteId = clienteId,
                             marca = brand,
                             modelo = model,
@@ -222,6 +214,13 @@ fun AddVehicleScreen(clienteId: Int, navController: NavController, vehiculoRepos
                             color = colorToHex(colorVehicle),
                             tipo = vehicleType
                         )
+
+                        vehiculoRepository.insertar(vehiculo)
+
+                        // Mostrar mensaje de éxito
+                        withContext(Dispatchers.Main) {
+                            showBottomSheet = true
+                        }
                     }
                 },
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1A73E8)),
@@ -239,13 +238,11 @@ fun AddVehicleScreen(clienteId: Int, navController: NavController, vehiculoRepos
                 )
             }
 
-            if (showBottomSheet){
+            if (showBottomSheet) {
                 ShowSaveDialog()
             }
-
         }
     }
-
 }
 
 @Composable

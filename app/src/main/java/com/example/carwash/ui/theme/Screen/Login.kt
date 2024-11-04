@@ -141,10 +141,17 @@ fun LoginScreen(navController: NavController, clienteRepository: ClienteReposito
                             val cliente = clienteRepository.iniciarSesion(telefono, contraseña)
                             withContext(Dispatchers.Main) {
                                 if (cliente != null && cliente.contraseña == contraseña) {
-                                    // Si las credenciales son correctas, navegar a la pantalla principal
-                                    navController.navigate("AddVehicle")
+                                    // Obtenemos el clienteId del objeto cliente obtenido desde la base de datos
+                                    val clienteId = cliente.clienteID  // Esto asume que `id` es la propiedad que almacena el ID del cliente.
+
+                                    if (clienteId != null) {
+                                        // Navegamos a la pantalla AddVehicle con el clienteId como argumento
+                                        navController.navigate("AddVehicle/$clienteId")
+                                    } else {
+                                        mensajeError = "Error inesperado: No se pudo obtener el ID del cliente."
+                                    }
                                 } else {
-                                    // Si son incorrectas, mostrar mensaje de error
+                                    // Mostrar mensaje de error si los datos no coinciden
                                     mensajeError = "Datos incorrectos. Verifica tu teléfono y contraseña."
                                 }
                             }
