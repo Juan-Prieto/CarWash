@@ -35,7 +35,9 @@ import com.example.carwash.Repository.VehiculoRepository
 
 @Composable
 fun ServiceScreen(
-    clienteId: Int,
+    clienteId: Int, // Asegúrate de recibir clienteId
+    nombre: String, // Recibe el nombre del cliente
+    apellido: String, // Recibe el apellido del cliente
     vehiculoRepository: VehiculoRepository,
     servicioRepository: ServicioRepository,
     registroLavadoRepository: RegistroLavadoRepository,
@@ -249,7 +251,8 @@ fun ServiceScreen(
                                 // Mostrar mensaje de registro exitoso y navegar a la pantalla de registros
                                 withContext(Dispatchers.Main) {
                                     Toast.makeText(context, "Registro exitoso", Toast.LENGTH_SHORT).show()
-                                    navController.navigate("RegistroListScreen/$clienteId")
+                                    navController.navigate("RegistroListScreen/$clienteId/$nombre/$apellido")
+
                                 }
                             }
                         }

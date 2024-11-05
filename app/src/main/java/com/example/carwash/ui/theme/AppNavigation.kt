@@ -75,12 +75,16 @@ fun AppNavigation(
 
         composable("ServiceScreen/{clienteId}") { backStackEntry ->
             val clienteId = backStackEntry.arguments?.getString("clienteId")?.toInt() ?: 0
+            val nombre = backStackEntry.arguments?.getString("nombre") ?: "Nombre"
+            val apellido = backStackEntry.arguments?.getString("apellido") ?: "Apellido"
             ServiceScreen(
                 clienteId = clienteId,
                 vehiculoRepository = vehiculoRepository,
                 servicioRepository = servicioRepository,
                 registroLavadoRepository = registroLavadoRepository,
-                navController = navController
+                navController = navController,
+                nombre = nombre,
+                apellido = apellido
             )
         }
 
