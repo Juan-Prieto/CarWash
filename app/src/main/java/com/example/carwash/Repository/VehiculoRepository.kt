@@ -8,7 +8,7 @@ class VehiculoRepository (private val vehiculoDAO: VehiculoDAO){
         return vehiculoDAO.insertar(vehiculo)
     }
 
-    suspend fun obtener():List<Vehiculo>{
+    suspend fun obtener1():List<Vehiculo>{
         return vehiculoDAO.obtenerTodos()
     }
 
@@ -22,6 +22,14 @@ class VehiculoRepository (private val vehiculoDAO: VehiculoDAO){
 
     suspend fun actualizar(vehiculo : Vehiculo){
         return vehiculoDAO.actualizar(vehiculo)
+    }
+
+    suspend fun obtenerVehiculosPorCliente(clienteId: Int): List<Vehiculo> {
+        return vehiculoDAO.obtenerVehiculosPorCliente(clienteId)
+    }
+
+    suspend fun obtener(): List<Vehiculo> {
+        return vehiculoDAO.obtener()
     }
 
 }

@@ -1,5 +1,4 @@
-import android.os.Build
-import androidx.annotation.RequiresApi
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -12,59 +11,139 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.DirectionsCar
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Palette
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
+import androidx.compose.material.icons.filled.ExitToApp
+import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.example.carwash.Models.Vehiculo
+import com.example.carwash.Repository.VehiculoRepository
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.time.LocalDate
 import java.time.format.TextStyle
 import java.util.Locale
 
-
-
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun CalendarScreen() {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
+fun HomeScreen(navController: NavController, clienteId: Int, vehiculoRepository: VehiculoRepository, nombre: String, apellido: String) {
+    var vehicles by remember { mutableStateOf<List<Vehiculo>>(emptyList()) }
+    val coroutineScope = rememberCoroutineScope()
+    val snackbarHostState = remember { SnackbarHostState() }
 
+    // Cargar los vehículos del cliente específico cuando se monta la pantalla
+    LaunchedEffect(clienteId) {
+        coroutineScope.launch {
+            vehicles = withContext(Dispatchers.IO) {
+                vehiculoRepository.obtenerVehiculosPorCliente(clienteId)
+            }
+        }
+    }
 
-        CalendarHeader()
+    Scaffold(
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState)
+        }
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+                .padding(16.dp)
+        ) {
+            // Mensaje de Bienvenida y Botón de Sign Out
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                // Mensaje de bienvenida usando el nombre y apellido del cliente
+                Text(
+                    text = "Bienvenido, $nombre $apellido",
+                    style = MaterialTheme.typography.headlineSmall.copy(
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 20.sp
+                    )
+                )
 
-        Spacer(modifier = Modifier.height(16.dp))
+                // Botón "Sign Out" sin relleno, estilo similar al botón de "Sign In"
+                TextButton(onClick = {
+                    navController.navigate("Login")
+                }) {
+                    Icon(imageVector = Icons.Default.ExitToApp, contentDescription = "Sign Out")
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(text = "Sign Out")
+                }
+            }
 
+            Spacer(modifier = Modifier.height(16.dp))
 
+            // Botones de Add Vehicle, List Services y Add Service
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Button(onClick = {
+                    navController.navigate("AddVehicle/$clienteId")
+                }) {
+                    Text(text = "Add Vehicle")
+                }
+
+                Button(onClick = {
+                    navController.navigate("ListServices/$clienteId")
+                }) {
+                    Text(text = "List Services")
+                }
+
+                Button(onClick = {
+                    if (vehicles.isEmpty()) {
+                        coroutineScope.launch {
+                            snackbarHostState.showSnackbar("Registre primero su vehículo para utilizar nuestros servicios")
+                        }
+                    } else {
+                        // Navegar a la pantalla de servicios si tiene vehículos
+                        navController.navigate("ServiceScreen/$clienteId")
+                    }
+                }) {
+                    Text(text = "Add Service")
+                }
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            CalendarHeader()
+
+            Spacer(modifier = Modifier.height(16.dp))
+        }
     }
 }
 
-
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun CalendarHeader() {
     // Obtener la fecha actual
     val currentDate = LocalDate.now()
     val currentDay = currentDate.dayOfMonth
-    val currentDayOfWeek =
-        currentDate.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault())
+    val currentDayOfWeek = currentDate.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault())
     val currentMonth = currentDate.month.getDisplayName(TextStyle.FULL, Locale.getDefault())
     val currentYear = currentDate.year
 
@@ -79,7 +158,6 @@ fun CalendarHeader() {
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.Start
         ) {
-
             Text(
                 text = "$currentDay",
                 fontSize = 32.sp,
@@ -90,7 +168,7 @@ fun CalendarHeader() {
 
             Column {
                 Text(
-                    text = "$currentDayOfWeek",
+                    text = currentDayOfWeek,
                     fontSize = 14.sp,
                     color = Color.Gray,
                     fontWeight = FontWeight.Light
@@ -110,11 +188,9 @@ fun CalendarHeader() {
             Text(
                 text = "Today",
                 color = Color(0xFF1A73E8),
-                fontWeight = FontWeight.Bold,
-
+                fontWeight = FontWeight.Bold
             )
         }
-
     }
 
     Spacer(modifier = Modifier.height(8.dp))
@@ -156,101 +232,15 @@ fun CalendarHeader() {
         }
     }
     CustomDivider()
-    TimelineItem("10:00", "11:00", Vehiculo(1, 1, "Mazda", "2021", "pdf43r", "rojo", "SEDAN" ))
-}
-
-@Composable
-fun TimelineItem(startTime: String, endTime: String, vehiculo: Vehiculo) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 10.dp, end = 1.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        // Parte izquierda: Hora de inicio y finalización del evento
-        Column(
-            modifier = Modifier.weight(0.3f), // Ajusta el ancho de la columna izquierda
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.End
-        ) {
-            Text(
-                text = startTime,
-                fontSize = 16.sp,
-                color = Color.Gray
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = endTime,
-                fontSize = 14.sp,
-                color = Color.LightGray
-            )
-        }
-
-        Spacer(modifier = Modifier.width(16.dp))
-
-        // Parte derecha: Tarjeta con detalles del vehículo
-        Card(
-            modifier = Modifier
-                .weight(0.7f)
-                .fillMaxWidth(),
-            colors = CardDefaults.cardColors(
-                containerColor = Color(0xFF1A73E8) // Color gris claro
-            ),
-            shape = RoundedCornerShape(8.dp)
-
-        ) {
-            Column(modifier = Modifier.padding(16.dp)) {
-                Text(text = "Shine", fontWeight = FontWeight.Bold, fontSize = 18.sp, color = Color.White)
-                Spacer(modifier = Modifier.height(8.dp))
-
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(Icons.Default.DirectionsCar, contentDescription = "Vehículo", tint = Color.White, modifier = Modifier.size(15.dp))
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(text = "${vehiculo.marca}, ${vehiculo.modelo}", color = Color.White, fontWeight = FontWeight.Normal)
-                }
-
-                Spacer(modifier = Modifier.height(4.dp))
-
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(Icons.Default.Info, contentDescription = "Placa", tint = Color.White, modifier = Modifier.size(15.dp))
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(text = "Placa: ${vehiculo.placa}", color = Color.White)
-                }
-
-                Spacer(modifier = Modifier.height(4.dp))
-
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(Icons.Default.Palette, contentDescription = "Color", tint = Color.White, modifier = Modifier.size(15.dp))
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(text = "Color: ${vehiculo.color}", color = Color.White)
-                }
-
-                Spacer(modifier = Modifier.height(4.dp))
-
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(Icons.Default.DirectionsCar, contentDescription = "Tipo", tint = Color.White, modifier = Modifier.size(15.dp))
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(text = "Tipo: ${vehiculo.tipo}", color = Color.White)
-                }
-            }
-        }
-    }
 }
 
 @Composable
 fun CustomDivider() {
     Divider(
-        color = Color.LightGray, // Color de la línea divisoria
-        thickness = 0.2.dp, // Grosor de la línea
+        color = Color.LightGray,
+        thickness = 0.2.dp,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 3.dp, bottom = 3.dp)// Se extiende a lo ancho del contenedor
+            .padding(top = 3.dp, bottom = 3.dp)
     )
-}
-
-@RequiresApi(Build.VERSION_CODES.O)
-@Composable
-@Preview
-fun ver() {
-    CalendarScreen()
 }

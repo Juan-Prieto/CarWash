@@ -141,28 +141,21 @@ fun LoginScreen(navController: NavController, clienteRepository: ClienteReposito
                             val cliente = clienteRepository.iniciarSesion(telefono, contraseña)
                             withContext(Dispatchers.Main) {
                                 if (cliente != null && cliente.contraseña == contraseña) {
-                                    // Obtenemos el clienteId del objeto cliente obtenido desde la base de datos
-                                    val clienteId = cliente.clienteID  // Esto asume que `id` es la propiedad que almacena el ID del cliente.
+                                    // Navegar a la pantalla Home con los datos correctos del cliente
+                                    val clienteId = cliente.clienteID
+                                    val nombre = cliente.nombre
+                                    val apellido = cliente.apellido
 
-                                    if (clienteId != null) {
-                                        // Navegamos a la pantalla AddVehicle con el clienteId como argumento
-                                        navController.navigate("AddVehicle/$clienteId")
-                                    } else {
-                                        mensajeError = "Error inesperado: No se pudo obtener el ID del cliente."
-                                    }
+                                    navController.navigate("HomeScreen/$clienteId/$nombre/$apellido")
                                 } else {
                                     // Mostrar mensaje de error si los datos no coinciden
                                     mensajeError = "Datos incorrectos. Verifica tu teléfono y contraseña."
                                 }
                             }
                         }
-                    },
-                    colors = ButtonDefaults.buttonColors(Color.Blue),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(48.dp)
+                    }
                 ) {
-                    Text(text = "Sign in")
+                    Text("Sign In")
                 }
 
                 if (mensajeError.isNotEmpty()) {

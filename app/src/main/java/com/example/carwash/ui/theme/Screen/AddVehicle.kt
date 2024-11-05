@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
@@ -29,6 +30,7 @@ import androidx.navigation.NavController
 import com.example.carwash.R
 import kotlinx.coroutines.launch
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.text.input.ImeAction
 import com.example.carwash.Models.Vehiculo
 import com.example.carwash.Repository.VehiculoRepository
 import kotlinx.coroutines.Dispatchers
@@ -55,7 +57,7 @@ fun AddVehicleScreen(clienteId: Int, navController: NavController, vehiculoRepos
 
     IconButton(
         onClick = {
-            navController.navigate("home")
+            navController.navigate("HomeScreen/$clienteId")
         },
         modifier = Modifier
             .padding(top = 20.dp),
@@ -119,7 +121,8 @@ fun AddVehicleScreen(clienteId: Int, navController: NavController, vehiculoRepos
                     label = { Text("Specify Vehicle Type") },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(bottom = 16.dp)
+                        .padding(bottom = 16.dp),
+                    keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done)
                 )
 
                 Button(
@@ -129,7 +132,8 @@ fun AddVehicleScreen(clienteId: Int, navController: NavController, vehiculoRepos
                             vehicleType = otherVehicleType
                         }
                     },
-                    modifier = Modifier.padding(bottom = 16.dp)
+                    modifier = Modifier.padding(bottom = 16.dp),
+                    enabled = otherVehicleType.isNotEmpty()
                 ) {
                     Text("Add Vehicle Type")
                 }
@@ -144,7 +148,9 @@ fun AddVehicleScreen(clienteId: Int, navController: NavController, vehiculoRepos
                 label = { Text("Brand") },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 16.dp)
+                    .padding(bottom = 16.dp),
+                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
+                isError = brand.isEmpty()
             )
 
             OutlinedTextField(
@@ -155,7 +161,9 @@ fun AddVehicleScreen(clienteId: Int, navController: NavController, vehiculoRepos
                 label = { Text("Model") },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 16.dp)
+                    .padding(bottom = 16.dp),
+                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
+                isError = model.isEmpty()
             )
 
             OutlinedTextField(
@@ -166,7 +174,8 @@ fun AddVehicleScreen(clienteId: Int, navController: NavController, vehiculoRepos
                 label = { Text("Plate Number (Optional)") },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 16.dp)
+                    .padding(bottom = 16.dp),
+                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done)
             )
 
             // Selección de color
@@ -205,21 +214,23 @@ fun AddVehicleScreen(clienteId: Int, navController: NavController, vehiculoRepos
             Button(
                 onClick = {
                     // Insertar el vehículo en la base de datos
-                    scope.launch {
-                        val vehiculo = Vehiculo(
-                            clienteId = clienteId,
-                            marca = brand,
-                            modelo = model,
-                            placa = plateNumber,
-                            color = colorToHex(colorVehicle),
-                            tipo = vehicleType
-                        )
+                    if (brand.isNotEmpty() && model.isNotEmpty()) {
+                        scope.launch {
+                            val vehiculo = Vehiculo(
+                                clienteId = clienteId,
+                                marca = brand,
+                                modelo = model,
+                                placa = plateNumber,
+                                color = colorToHex(colorVehicle),
+                                tipo = vehicleType
+                            )
 
-                        vehiculoRepository.insertar(vehiculo)
+                            vehiculoRepository.insertar(vehiculo)
 
-                        // Mostrar mensaje de éxito
-                        withContext(Dispatchers.Main) {
-                            showBottomSheet = true
+                            // Mostrar mensaje de éxito
+                            withContext(Dispatchers.Main) {
+                                showBottomSheet = true
+                            }
                         }
                     }
                 },
@@ -227,7 +238,8 @@ fun AddVehicleScreen(clienteId: Int, navController: NavController, vehiculoRepos
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(50.dp),
-                shape = RoundedCornerShape(8.dp)
+                shape = RoundedCornerShape(8.dp),
+                enabled = brand.isNotEmpty() && model.isNotEmpty()
             ) {
                 Text(
                     text = "Save Vehicle",
@@ -239,7 +251,7 @@ fun AddVehicleScreen(clienteId: Int, navController: NavController, vehiculoRepos
             }
 
             if (showBottomSheet) {
-                ShowSaveDialog()
+                ShowSaveDialog(navController = navController, clienteId = clienteId)
             }
         }
     }
@@ -284,7 +296,7 @@ fun VehicleTypeOption(type: String, isSelected: Boolean = false, onClick: () -> 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ShowSaveDialog() {
+fun ShowSaveDialog(navController: NavController, clienteId: Int) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val coroutineScope = rememberCoroutineScope()
 
@@ -300,7 +312,7 @@ fun ShowSaveDialog() {
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 17.dp)
-                .height(200.dp),
+                .height(250.dp), // Incrementa el tamaño para acomodar el botón
             contentAlignment = Alignment.Center
         ) {
             Column(
@@ -328,10 +340,33 @@ fun ShowSaveDialog() {
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold
                 )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Botón "Add Service"
+                Button(
+                    onClick = {
+                        navController.navigate("ServiceScreen/$clienteId") // Navegar a la pantalla de servicios
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                        .height(50.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1A73E8)),
+                    shape = RoundedCornerShape(8.dp)
+                ) {
+                    Text(
+                        text = "Add Service",
+                        color = Color.White,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
             }
         }
     }
 }
+
 fun colorToHex(color: Color): String {
     return "#" + Integer.toHexString(color.toArgb()).substring(2).uppercase()
 }
+

@@ -11,8 +11,8 @@ android {
 
     defaultConfig {
         applicationId = "com.example.carwash"
-        minSdk = 24
-        targetSdk = 34
+        minSdk = 26
+        targetSdk = 36
         versionCode = 1
         versionName = "1.0"
 
@@ -64,8 +64,8 @@ dependencies {
     implementation(libs.androidx.material3)
 
     // dependencias necesarias
-    implementation("androidx.compose.material:material-icons-extended:1.5.1") // incluir iconos
-    implementation ("androidx.compose.ui:ui:1.5.1") // context
+    implementation("androidx.compose.material:material-icons-extended:1.7.5") // incluir iconos
+    implementation ("androidx.compose.ui:ui:1.7.5") // context
 
     implementation(libs.androidx.room.common)
     implementation(libs.androidx.navigation.runtime.ktx)

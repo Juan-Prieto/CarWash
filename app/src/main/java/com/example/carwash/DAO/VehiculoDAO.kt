@@ -16,7 +16,6 @@ interface VehiculoDAO {
     @Query("SELECT * FROM vehiculos WHERE vehiculoID = :vehiculoID")
     suspend fun obtenerID(vehiculoID : Int): Vehiculo
 
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertar(vehiculo:Vehiculo): Long
 
@@ -26,4 +25,9 @@ interface VehiculoDAO {
     @Update
     suspend fun actualizar(vehiculo: Vehiculo)
 
+    @Query("SELECT * FROM vehiculos WHERE clienteId = :clienteId")
+    suspend fun obtenerVehiculosPorCliente(clienteId: Int): List<Vehiculo>
+
+    @Query("SELECT * FROM vehiculos")
+    suspend fun obtener(): List<Vehiculo>
 }
