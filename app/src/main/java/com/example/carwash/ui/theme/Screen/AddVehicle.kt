@@ -57,10 +57,9 @@ fun AddVehicleScreen(clienteId: Int, navController: NavController, vehiculoRepos
 
     IconButton(
         onClick = {
-            navController.navigate("HomeScreen/$clienteId")
+            navController.popBackStack() // Vuelve a la pantalla anterior en la pila de navegación
         },
-        modifier = Modifier
-            .padding(top = 20.dp),
+        modifier = Modifier.padding(bottom = 16.dp)
     ) {
         Icon(
             imageVector = Icons.Default.ArrowBack,
