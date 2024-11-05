@@ -28,4 +28,7 @@ interface ServicioDAO {
     @Update
     suspend fun actualizar(servicio: Servicio)
 
+    @Query("DELETE FROM servicios")
+    suspend fun borrarTodos()
+
 }

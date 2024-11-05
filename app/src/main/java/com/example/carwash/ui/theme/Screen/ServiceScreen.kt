@@ -1,3 +1,5 @@
+package com.example.carwash.ui.theme.Screen
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -40,13 +42,7 @@ fun ServiceScreen(
     navController: NavController
 ) {
     var vehicles by remember { mutableStateOf<List<Vehiculo>>(emptyList()) }
-    val services = listOf(
-        Servicio(servicioID = 1, nombre = "Desinfección con Ozono", precio = 45000.0),
-        Servicio(servicioID = 2, nombre = "Lavado General con Chasis", precio = 49000.0),
-        Servicio(servicioID = 3, nombre = "Combo motor y desengrasante", precio = 55000.0),
-        Servicio(servicioID = 4, nombre = "Combo Protección", precio = 88000.0),
-        Servicio(servicioID = 5, nombre = "Combo Reestreno", precio = 143000.0)
-    )
+    var servicios by remember { mutableStateOf<List<Servicio>>(emptyList()) }
     var selectedVehicleId by remember { mutableStateOf<Int?>(null) }
     var selectedService by remember { mutableStateOf<Servicio?>(null) }
     var selectedDate by remember { mutableStateOf<LocalDate?>(null) }
@@ -54,11 +50,33 @@ fun ServiceScreen(
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
 
-    // Cargar los vehículos del cliente específico cuando se monta la pantalla
+    // Cargar los vehículos y servicios al montar la pantalla
     LaunchedEffect(clienteId) {
         coroutineScope.launch {
+            // Cargar vehículos del cliente
             vehicles = withContext(Dispatchers.IO) {
                 vehiculoRepository.obtenerVehiculosPorCliente(clienteId)
+            }
+
+            // Cargar servicios desde la base de datos
+            servicios = withContext(Dispatchers.IO) {
+                servicioRepository.obtener()
+            }
+
+            // Si la tabla de servicios está vacía, inicializa con servicios predefinidos
+            if (servicios.isEmpty()) {
+                val serviciosIniciales = listOf(
+                    Servicio(servicioID = 1, nombre = "Lavado Exterior", precio = 10000.0),
+                    Servicio(servicioID = 2, nombre = "Lavado Interior", precio = 15000.0),
+                    Servicio(servicioID = 3, nombre = "Lavado Full", precio = 35000.0),
+                    Servicio(servicioID = 4, nombre = "Lavado Premium", precio = 60000.0)
+                )
+                serviciosIniciales.forEach {
+                    servicioRepository.insertar(it)
+                }
+                servicios = withContext(Dispatchers.IO) {
+                    servicioRepository.obtener()
+                }
             }
         }
     }
@@ -108,19 +126,28 @@ fun ServiceScreen(
             }
         }
 
-        // LazyRow para mostrar los vehículos
+        // Mostrar vehiculos
         item {
-            LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                items(vehicles) { vehicle ->
-                    VehicleCard(
-                        name = "${vehicle.marca} ${vehicle.tipo}",
-                        details = "${getColorName(vehicle.color)} - ${vehicle.placa}",
-                         selected = selectedVehicleId == vehicle.vehiculoID,
-                        onClick = {
-                            selectedVehicleId = vehicle.vehiculoID
-                        }
-                    )
+            if (vehicles.isNotEmpty()) {
+                LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    items(vehicles) { vehicle ->
+                        VehicleCard(
+                            name = "${vehicle.marca} ${vehicle.tipo}",
+                            details = "${getColorName(vehicle.color)} - ${vehicle.placa}",
+                            selected = selectedVehicleId == vehicle.vehiculoID,
+                            onClick = {
+                                selectedVehicleId = vehicle.vehiculoID
+                            }
+                        )
+                    }
                 }
+            } else {
+                // Mostrar un mensaje si la lista de vehículos está vacía
+                Text(
+                    text = "No vehicles available",
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.padding(16.dp)
+                )
             }
         }
 
@@ -152,7 +179,7 @@ fun ServiceScreen(
         // LazyRow para mostrar los paquetes de servicios
         item {
             LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                items(services) { service ->
+                items(servicios) { service ->
                     ServicePackageCard(
                         service = service,
                         selected = selectedService == service,
@@ -202,13 +229,22 @@ fun ServiceScreen(
                                 // Inserta el registro de lavado con el servicio seleccionado
                                 val registro = RegistroLavado(
                                     vehiculoId = selectedVehicleId!!,
-                                    servicioId = selectedService!!.servicioID, // Asegúrate de que se esté asignando el ID del servicio seleccionado
+                                    servicioId = selectedService!!.servicioID,
                                     fechaLavado = selectedDate.toString(),
                                     horaInicio = selectedTimeSlot!!.first,
                                     horaFin = selectedTimeSlot!!.second,
                                     precioTotal = selectedService!!.precio
                                 )
                                 registroLavadoRepository.insertar(registro)
+
+                                // Insertar el servicio seleccionado en la base de datos
+                                servicioRepository.insertar(
+                                    Servicio(
+                                        servicioID = selectedService!!.servicioID,
+                                        nombre = selectedService!!.nombre,
+                                        precio = selectedService!!.precio
+                                    )
+                                )
 
                                 // Mostrar mensaje de registro exitoso y navegar a la pantalla de registros
                                 withContext(Dispatchers.Main) {
@@ -434,8 +470,8 @@ fun VehicleCard(
 }
 
 // Función para obtener el nombre del color
-fun getColorName(colorCode: String): String {
-    return when (colorCode) {
+fun getColorName(colorCode: String?): String {
+    return when (colorCode?.uppercase()) {
         "#D3D3D3" -> "Light Gray"
         "#808080" -> "Gray"
         "#A9A9A9" -> "Dark Gray"
@@ -448,6 +484,7 @@ fun getColorName(colorCode: String): String {
         "#FFA500" -> "Orange"
         "#800080" -> "Purple"
         "#00FFFF" -> "Cyan"
-        else -> colorCode // Muestra el código de color si no se reconoce
+        null, "" -> "Unknown" // Manejar el caso de un color nulo o vacío
+        else -> colorCode // Retornar el código de color si no se reconoce
     }
 }

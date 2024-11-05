@@ -15,7 +15,7 @@ import com.example.carwash.Models.Vehiculo
 
 @Database(
     entities = [Cliente::class, Vehiculo::class, RegistroLavado::class, Servicio::class],
-    version = 3, // Versión incrementada de 1 a 2
+    version = 4, // Versión de la base de datos
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -35,7 +35,7 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     "app_database"
                 )
-//                    .fallbackToDestructiveMigration()
+                    .fallbackToDestructiveMigration()
                     .build()
                 INSTANCE = instance
                 instance

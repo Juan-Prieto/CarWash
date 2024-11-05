@@ -29,4 +29,7 @@ class ClienteRepository(private val clienteDAO: ClienteDAO){
         return clienteDAO.iniciarSesion(telefono, contraseña)
     }
 
+    suspend fun borrarTodos() {
+        clienteDAO.borrarTodos()
+    }
 }

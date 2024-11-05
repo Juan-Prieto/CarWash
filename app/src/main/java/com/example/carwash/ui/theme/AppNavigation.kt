@@ -1,7 +1,5 @@
 package com.example.carwash.ui.theme
 
-import HomeScreen
-import ServiceScreen
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -12,12 +10,14 @@ import com.example.carwash.Repository.ServicioRepository
 import com.example.carwash.Repository.VehiculoRepository
 import com.example.carwash.ui.theme.Screen.AddVehicleScreen
 import com.example.carwash.ui.theme.Screen.CarWashScreen
+import com.example.carwash.ui.theme.Screen.HomeScreen
 import com.example.carwash.ui.theme.Screen.LoginScreen
 import com.example.carwash.ui.theme.Screen.RegistrationForm
 import com.example.carwash.ui.theme.Screen.RegistroListScreen
 import com.example.carwash.ui.theme.Screen.SelectYourCarScreen
 import com.example.carwash.ui.theme.Screen.SelectYourCarScreenThree
 import com.example.carwash.ui.theme.Screen.SelectYourCarScreenTwo
+import com.example.carwash.ui.theme.Screen.ServiceScreen
 
 @Composable
 fun AppNavigation(

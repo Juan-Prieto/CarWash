@@ -32,4 +32,8 @@ class VehiculoRepository (private val vehiculoDAO: VehiculoDAO){
         return vehiculoDAO.obtener()
     }
 
+    suspend fun borrarTodos() {
+        vehiculoDAO.borrarTodos()
+    }
+
 }
