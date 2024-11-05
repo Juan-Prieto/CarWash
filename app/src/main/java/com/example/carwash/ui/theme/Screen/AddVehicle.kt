@@ -36,8 +36,6 @@ import com.example.carwash.Repository.VehiculoRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddVehicleScreen(clienteId: Int, navController: NavController, vehiculoRepository: VehiculoRepository) {
 

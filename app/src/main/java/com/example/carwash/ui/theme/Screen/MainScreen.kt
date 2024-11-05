@@ -19,7 +19,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import com.example.carwash.R
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CarWashScreen(navController: NavController) {
     Box(

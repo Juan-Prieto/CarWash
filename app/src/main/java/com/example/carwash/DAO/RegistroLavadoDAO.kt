@@ -34,6 +34,4 @@ interface RegistroLavadoDAO {
         @Transaction
         @Query("SELECT * FROM registroslavado")
         suspend fun getAllRegistrosConDetalles(): List<RegistroLavadoDetalles>
-
-
 }

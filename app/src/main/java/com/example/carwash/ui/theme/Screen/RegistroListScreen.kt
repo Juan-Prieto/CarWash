@@ -2,6 +2,7 @@ package com.example.carwash.ui.theme.Screen
 
 import android.widget.Toast
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -37,6 +38,10 @@ fun RegistroListScreen(
         scope.launch {
             val registrosFromDB = registroLavadoRepository.getAllRegistrosConDetalles()
             registros = registrosFromDB
+
+            registrosFromDB.forEach { registro ->
+                println("Servicio: ${registro.servicio?.nombre}")
+            }
         }
     }
 
@@ -49,6 +54,7 @@ fun RegistroListScreen(
         Text(
             text = "Historial de Servicios",
             fontSize = 24.sp,
+            fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(16.dp)
         )
 
@@ -107,27 +113,54 @@ fun RegistroItem(
         colors = CardDefaults.cardColors(containerColor = Color(0xFFF3F4F6)),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
-        Column(
+        Row(
             modifier = Modifier
-                .padding(16.dp)
-                .fillMaxWidth(),
-            horizontalAlignment = Alignment.Start
+                .fillMaxWidth()
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(text = "Fecha de Lavado: ${registro.registroLavado.fechaLavado}", fontSize = 16.sp, color = Color.Black)
-            Spacer(modifier = Modifier.height(4.dp))
+            Column(
+                modifier = Modifier.weight(1f)
+            ) {
+                Text(
+                    text = registro.servicio?.nombre ?: "Servicio: No disponible",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Black
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = "Vehículo: ${registro.vehiculo?.marca ?: "N/A"} - ${registro.vehiculo?.modelo ?: "N/A"}",
+                    fontSize = 14.sp,
+                    color = Color.DarkGray
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = "Color: ${getColorName(registro.vehiculo?.color ?: "#FFFFFF")}",
+                    fontSize = 14.sp,
+                    color = Color.DarkGray
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = "Intervalo: ${registro.registroLavado.horaInicio} - ${registro.registroLavado.horaFin}",
+                    fontSize = 14.sp,
+                    color = Color.DarkGray
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = "Fecha: ${registro.registroLavado.fechaLavado}",
+                    fontSize = 14.sp,
+                    color = Color.DarkGray
+                )
+            }
 
-            val vehiculoInfo = registro.vehiculo?.let { "Vehículo: ${it.marca} ${it.modelo}" } ?: "Vehículo: No disponible"
-            val clienteInfo = registro.cliente?.let { "Cliente: ${it.nombre} ${it.apellido}" } ?: "Cliente: No disponible"
-            val servicioInfo = registro.servicio?.nombre ?: "Servicio: No disponible"
-
-            Text(text = vehiculoInfo, fontSize = 14.sp, color = Color.DarkGray)
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(text = clienteInfo, fontSize = 14.sp, color = Color.DarkGray)
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(text = "Servicio: $servicioInfo", fontSize = 14.sp, color = Color.DarkGray)
-            Spacer(modifier = Modifier.height(4.dp))
-
-            Text(text = "Precio Total: \$${registro.registroLavado.precioTotal}", fontSize = 16.sp, color = Color.Black)
+            Text(
+                text = registro.registroLavado.horaInicio,
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color(0xFF1A73E8),
+                modifier = Modifier.padding(start = 8.dp)
+            )
         }
     }
 }
@@ -226,4 +259,19 @@ fun FacturaDialog(
             }
         }
     )
+}
+
+fun getColorName(colorCode: String): String {
+    return when (colorCode) {
+        "#D3D3D3" -> "Gris Claro"
+        "#808080" -> "Gris"
+        "#A9A9A9" -> "Gris Oscuro"
+        "#000000" -> "Negro"
+        "#FF0000" -> "Rojo"
+        "#0000FF" -> "Azul"
+        "#FFFFFF" -> "Blanco"
+        "#008000" -> "Verde"
+        "#FFFF00" -> "Amarillo"
+        else -> "Color Desconocido" // O muestra el código si no se reconoce
+    }
 }

@@ -1,4 +1,3 @@
-
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -11,9 +10,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -36,26 +39,37 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.carwash.Models.RegistroLavadoDetalles
 import com.example.carwash.Models.Vehiculo
+import com.example.carwash.Repository.RegistroLavadoRepository
 import com.example.carwash.Repository.VehiculoRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.time.LocalDate
-import java.time.format.TextStyle
-import java.util.Locale
 
 @Composable
-fun HomeScreen(navController: NavController, clienteId: Int, vehiculoRepository: VehiculoRepository, nombre: String, apellido: String) {
+fun HomeScreen(
+    navController: NavController,
+    clienteId: Int,
+    vehiculoRepository: VehiculoRepository,
+    registroLavadoRepository: RegistroLavadoRepository,
+    nombre: String,
+    apellido: String
+) {
     var vehicles by remember { mutableStateOf<List<Vehiculo>>(emptyList()) }
+    var registros by remember { mutableStateOf<List<RegistroLavadoDetalles>>(emptyList()) }
     val coroutineScope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
 
-    // Cargar los vehículos del cliente específico cuando se monta la pantalla
+    // Cargar los vehículos y registros del cliente específico cuando se monta la pantalla
     LaunchedEffect(clienteId) {
         coroutineScope.launch {
             vehicles = withContext(Dispatchers.IO) {
                 vehiculoRepository.obtenerVehiculosPorCliente(clienteId)
+            }
+            registros = withContext(Dispatchers.IO) {
+                registroLavadoRepository.getAllRegistrosConDetalles()
+                    .filter { it.cliente?.clienteID == clienteId }
             }
         }
     }
@@ -110,7 +124,7 @@ fun HomeScreen(navController: NavController, clienteId: Int, vehiculoRepository:
                 }
 
                 Button(onClick = {
-                    navController.navigate("ListServices/$clienteId")
+                    navController.navigate("RegistroListScreen/$clienteId")
                 }) {
                     Text(text = "List Services")
                 }
@@ -131,116 +145,72 @@ fun HomeScreen(navController: NavController, clienteId: Int, vehiculoRepository:
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            CalendarHeader()
-
-            Spacer(modifier = Modifier.height(16.dp))
-        }
-    }
-}
-
-@Composable
-fun CalendarHeader() {
-    // Obtener la fecha actual
-    val currentDate = LocalDate.now()
-    val currentDay = currentDate.dayOfMonth
-    val currentDayOfWeek = currentDate.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault())
-    val currentMonth = currentDate.month.getDisplayName(TextStyle.FULL, Locale.getDefault())
-    val currentYear = currentDate.year
-
-    // Header de calendario (día actual y "Today" si corresponde)
-    Column(
-        modifier = Modifier
-            .padding(top = 16.dp),
-        horizontalAlignment = Alignment.Start
-    ) {
-        // Día de la semana y fecha
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Start
-        ) {
+            // Mostrar registros de servicios
             Text(
-                text = "$currentDay",
-                fontSize = 32.sp,
-                fontWeight = FontWeight.Bold
+                text = "Historial de Servicios",
+                style = MaterialTheme.typography.bodyMedium.copy(
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp
+                ),
+                modifier = Modifier.padding(bottom = 8.dp)
             )
 
-            Spacer(modifier = Modifier.width(8.dp))
-
-            Column {
-                Text(
-                    text = currentDayOfWeek,
-                    fontSize = 14.sp,
-                    color = Color.Gray,
-                    fontWeight = FontWeight.Light
-                )
-
-                Text(
-                    text = "$currentMonth $currentYear",
-                    fontSize = 14.sp,
-                    color = Color.Gray,
-                    fontWeight = FontWeight.SemiBold
-                )
-            }
-
-            Spacer(modifier = Modifier.weight(1f))
-
-            // Parte derecha: Texto "Today"
-            Text(
-                text = "Today",
-                color = Color(0xFF1A73E8),
-                fontWeight = FontWeight.Bold
-            )
-        }
-    }
-
-    Spacer(modifier = Modifier.height(8.dp))
-
-    // Días del mes (visualización de 7 días, incluyendo el actual)
-    val startDay = currentDay - 3
-    val endDay = currentDay + 3
-
-    CustomDivider()
-
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceEvenly
-    ) {
-        (startDay..endDay).forEach { day ->
-            val isToday = day == currentDay
-
-            Box(
-                modifier = Modifier.size(40.dp),
-                contentAlignment = Alignment.Center
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                if (isToday) {
-                    Box(
-                        modifier = Modifier
-                            .size(height = 35.dp, width = 29.dp)
-                            .background(Color(0xFF1A73E8), shape = MaterialTheme.shapes.extraSmall),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = "$day",
-                            color = Color.White,
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
-                } else {
-                    Text(text = "$day", color = Color.Gray)
+                items(registros) { registro ->
+                    RegistroCard(registro)
                 }
             }
         }
     }
-    CustomDivider()
 }
 
 @Composable
-fun CustomDivider() {
-    Divider(
-        color = Color.LightGray,
-        thickness = 0.2.dp,
+fun RegistroCard(registro: RegistroLavadoDetalles) {
+    Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 3.dp, bottom = 3.dp)
-    )
+            .padding(vertical = 4.dp),
+        colors = CardDefaults.cardColors(containerColor = Color(0xFF1A73E8)),
+        shape = MaterialTheme.shapes.medium
+    ) {
+        Column(
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth()
+        ) {
+            // Tipo de servicio
+            Text(
+                text = registro.servicio?.nombre ?: "Servicio Desconocido",
+                color = Color.White,
+                fontWeight = FontWeight.Bold,
+                fontSize = 16.sp
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // Información del vehículo
+            Text(
+                text = "${registro.vehiculo?.tipo ?: "Tipo Desconocido"} - ${registro.vehiculo?.marca ?: "Marca Desconocida"}",
+                color = Color.White,
+                fontSize = 14.sp
+            )
+
+            // Modelo del vehículo
+            Text(
+                text = "Modelo: ${registro.vehiculo?.modelo ?: "Desconocido"}",
+                color = Color.White,
+                fontSize = 14.sp
+            )
+
+            // Intervalo de tiempo del servicio
+            Text(
+                text = "Duración: ${registro.registroLavado.horaInicio} - ${registro.registroLavado.horaFin}",
+                color = Color.White,
+                fontSize = 14.sp
+            )
+        }
+    }
 }

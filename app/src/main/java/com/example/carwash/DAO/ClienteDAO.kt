@@ -37,10 +37,3 @@ interface ClienteDAO {
     fun getAllClientesConVehiculos(): LiveData<List<ClienteVehiculo>>
 }
 
-
-
-
-
-//    @Transaction
-//    @Query("SELECT * FROM Vehiculos WHERE clienteID = :clienteID")
-//    suspend fun obtenerVehiculosCliente(clienteID: Int): List<Vehiculo>
