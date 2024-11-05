@@ -35,8 +35,6 @@ interface ClienteDAO {
     @Transaction
     @Query("SELECT * FROM clientes")
     fun getAllClientesConVehiculos(): LiveData<List<ClienteVehiculo>>
-
-    @Query("DELETE FROM clientes")
-    suspend fun borrarTodos()
 }
+
 

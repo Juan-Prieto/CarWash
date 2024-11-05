@@ -35,6 +35,4 @@ interface RegistroLavadoDAO {
         @Query("SELECT * FROM registroslavado")
         suspend fun getAllRegistrosConDetalles(): List<RegistroLavadoDetalles>
 
-        @Query("DELETE FROM registroslavado")
-        suspend fun borrarTodos()
 }

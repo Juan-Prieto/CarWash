@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -28,7 +30,10 @@ import kotlinx.coroutines.launch
 @Composable
 fun RegistroListScreen(
     registroLavadoRepository: RegistroLavadoRepository,
-    navController: NavController
+    navController: NavController,
+    clienteId: Int, // Asegúrate de recibir clienteId
+    nombre: String, // Recibe el nombre del cliente
+    apellido: String // Recibe el apellido del cliente
 ) {
     val scope = rememberCoroutineScope()
     var registros by remember { mutableStateOf<List<RegistroLavadoDetalles>>(emptyList()) }
@@ -51,6 +56,25 @@ fun RegistroListScreen(
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        // Icono de flecha hacia atrás
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Start
+        ) {
+            IconButton(
+                onClick = {
+                    navController.navigate("HomeScreen/${clienteId}/${nombre}/${apellido}")
+                },
+                modifier = Modifier.padding(bottom = 16.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.ArrowBack,
+                    contentDescription = "Back",
+                    tint = Color.Black
+                )
+            }
+        }
+
         Text(
             text = "Historial de Servicios",
             fontSize = 24.sp,

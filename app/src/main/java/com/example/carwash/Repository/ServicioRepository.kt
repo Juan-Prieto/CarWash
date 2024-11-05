@@ -24,18 +24,4 @@ class ServicioRepository(private val servicioDAO: ServicioDAO){
     suspend fun obtenerID(servicioId: Int): Servicio{
         return servicioDAO.obtenerID(servicioId)
     }
-
-    suspend fun inicializarServicios(services: List<Servicio>) {
-        val serviciosExistentes = servicioDAO.obtenerTodos()
-        if (serviciosExistentes.isEmpty()) {
-            services.forEach { servicio ->
-                servicioDAO.insertar(servicio)
-            }
-        }
-    }
-
-    suspend fun borrarTodos() {
-        servicioDAO.borrarTodos()
-    }
-
 }

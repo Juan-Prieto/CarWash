@@ -122,7 +122,7 @@ fun HomeScreen(
                 }
 
                 Button(onClick = {
-                    navController.navigate("RegistroListScreen/$clienteId")
+                    navController.navigate("RegistroListScreen/${clienteId}/${nombre}/${apellido}")
                 }) {
                     Text(text = "List Services")
                 }

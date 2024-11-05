@@ -30,7 +30,4 @@ interface VehiculoDAO {
 
     @Query("SELECT * FROM vehiculos")
     suspend fun obtener(): List<Vehiculo>
-
-    @Query("DELETE FROM vehiculos")
-    suspend fun borrarTodos()
 }

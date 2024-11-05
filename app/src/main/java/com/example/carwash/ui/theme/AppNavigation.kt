@@ -30,12 +30,6 @@ fun AppNavigation(
 
     NavHost(navController = navController, startDestination = "IntroductionOne") {
 
-        composable("Introduction") { // Para hacer pruebas
-            //LoginScreen()
-            //RegistrationForm(navController = navController, clienteRepository = clienteRepository)
-            //CarWashScreen()
-        }
-
         composable("IntroductionOne") { // Primera pantalla
             SelectYourCarScreen(navController = navController)
         }
@@ -90,15 +84,19 @@ fun AppNavigation(
             )
         }
 
-        composable("RegistroListScreen/{clienteId}") { backStackEntry ->
+        composable("RegistroListScreen/{clienteId}/{nombre}/{apellido}") { backStackEntry ->
             val clienteId = backStackEntry.arguments?.getString("clienteId")?.toInt() ?: 0
+            val nombre = backStackEntry.arguments?.getString("nombre") ?: "Nombre"
+            val apellido = backStackEntry.arguments?.getString("apellido") ?: "Apellido"
+
             RegistroListScreen(
                 registroLavadoRepository = registroLavadoRepository,
-                navController = navController
+                navController = navController,
+                clienteId = clienteId,
+                nombre = nombre,
+                apellido = apellido
             )
         }
-
-
     }
 }
 

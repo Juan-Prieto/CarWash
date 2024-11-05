@@ -26,7 +26,4 @@ class RegistroLavadoRepository(private val registrolavadoDAO: RegistroLavadoDAO)
         return registrolavadoDAO.actualizar(registrolavado)
     }
 
-    suspend fun borrarTodos() {
-        registrolavadoDAO.borrarTodos()
-    }
 }

@@ -269,3 +269,4 @@ fun RegistrationForm(navController: NavController, clienteRepository: ClienteRep
         }
     }
 }
+
